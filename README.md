@@ -1,17 +1,33 @@
-# M1-MIAGE-PDL
-Projet PDL de M1 Miage
+# OpenCompare - Procuct Chart
+PDL Project - M1 Miage
 
 
-Objectif
+##Objectif
 
-Resultat
 
-Licence
 
-Technologies utilisées
 
-Architecture du projet
+##Results
 
-Instructions pour déploiement du résultat 
 
-Exécution de la démonstration 
+
+
+##License
+
+
+
+##Development tools
+
+
+##Architecture du projet
+
+
+##Instructions pour déploiement du résultat 
+
+
+
+##Exécution de la démonstration 
+
+
+
+
