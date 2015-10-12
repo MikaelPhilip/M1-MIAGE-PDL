@@ -1,1 +1,4 @@
-<!--futur script js listener interface-->
+function hello(){
+
+alert('hi');
+}
