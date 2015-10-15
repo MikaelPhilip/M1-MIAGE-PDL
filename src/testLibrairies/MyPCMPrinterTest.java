@@ -19,14 +19,14 @@ public class MyPCMPrinterTest {
     public void testMyPCMPrinter() throws IOException {
 
         // Load a PCM
-        File pcmFile = new File("pcms/example-test4.pcm");
+        File pcmFile = new File("pcms/example.pcm");
         System.out.println(pcmFile.getClass());
         
         PCMLoader loader = new KMFJSONLoader();
         PCM pcm = loader.load(pcmFile).get(0).getPcm();
       
         //assertNotNull(pcm);
-        System.out.println(pcm.toString());
+        
         // Execute the printer
         MyPCMPrinter myPrinter = new MyPCMPrinter();
         myPrinter.print(pcm);

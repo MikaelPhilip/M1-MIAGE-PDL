@@ -19,10 +19,12 @@ public class MyPCMPrinter implements PCMVisitor {
 
         // We start by listing the names of the products
         System.out.println("--- Products ---");
-        System.out.println(pcm.toString());
+        
         for (Product product : pcm.getProducts()) {
-            System.out.println(product.getName());
-            System.out.println(product.getCells());
+           System.out.println(product.getName());
+           System.out.println(product.getCells());
+            
+            
            
         }
 
@@ -39,6 +41,7 @@ public class MyPCMPrinter implements PCMVisitor {
     public void visit(PCM pcm) {
         for (Product product : pcm.getProducts()) {
             product.accept(this);
+           //System.out.print( product.getName());
         }
     }
 
@@ -56,6 +59,7 @@ public class MyPCMPrinter implements PCMVisitor {
     public void visit(Product product) {
         for (Cell cell : product.getCells()) {
             cell.accept(this);
+            System.out.println(cell.getContent());
         }
     }
 
@@ -71,7 +75,7 @@ public class MyPCMPrinter implements PCMVisitor {
 
         // Print content of the cell if it is a boolean
         if (isBooleanCell) {
-           System.out.println(cell.getContent());
+        //   System.out.println(cell.getContent());
         }
     }
 
@@ -94,12 +98,14 @@ public class MyPCMPrinter implements PCMVisitor {
     public void visit(Dimension dimension) {
 
     }
-
+    // pour recuperer integerValue
     @Override
     public void visit(IntegerValue integerValue) {
-
+    	System.out.print( "je suis integer "+integerValue.getValue());
     }
 
+    
+    
     @Override
     public void visit(Multiple multiple) {
 
@@ -124,9 +130,11 @@ public class MyPCMPrinter implements PCMVisitor {
     public void visit(RealValue realValue) {
 
     }
-
+    //pour recuperer stringValue
     @Override
     public void visit(StringValue stringValue) {
+    	System.out.print( "je suis string "+stringValue.getValue());
+    	
 
     }
 
