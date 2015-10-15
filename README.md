@@ -2,7 +2,7 @@
 PDL Project - M1 Miage
 
 
-##Objectif
+##Objectives
 
 
 
@@ -19,14 +19,16 @@ PDL Project - M1 Miage
 ##Development tools
 
 
-##Architecture du projet
 
-
-##Instructions pour déploiement du résultat 
+##Project Architecture 
 
 
 
-##Exécution de la démonstration 
+##Instructions for deployment
+
+
+
+##Execution of the Demonstration
 
 
 
