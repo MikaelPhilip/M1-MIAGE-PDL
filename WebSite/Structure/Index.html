@@ -8,10 +8,40 @@
   <script  type="text/javascript" src="Listener.js"></script>
   <script  type="text/javascript" src="Script.js"></script>
 </head>
-<!--onload sert à lancer une méthode js lors du chargement-->
-<body onload="hello()">
- 	<h1>Test</h1>
-	<button class="btn btn-lg btn-primary" type="button"> Primary</button>
+<!--onload sert à lancer une méthode js lors du chargement (ex: onload="hello()")-->
+<body >
+	<header class="page-header">
+		<div id="container">
+			<h1>Product chart</h1>
+			<p>Outils de représentation graphique pour OpenCompare</p>
+		</div>
+	</header>
+ 	<div id="container" class="row">
+		<div id="Filtres" class="col-lg-2 col-sm-5">
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3>Filtre</h3>
+				</div>
+				<div class="panel-body">
+				<!--C'est ici qu'on rajoutera notre liste de filtre à partir du JSON-->
+				</div>
+			</div>
+		</div>
+		<div id="Chart" class="col-lg-10 col-sm-7">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3>Graphique</h3>
+				</div>
+				<div class="panel-body">
+					<!--C'est ici qu'on rajoutera nos données de filtre à partir du JSON-->
+				</div>
+			</div>
+		</div>
+	</div>
+	<footer class="footer">
+		<p>Created by: JELASSI Seifeddine,MAIROUCH Sanaa,PHILIP Mikael,ROCHARD Frederic,BARRY Ammar</p>
+	</footer>
+	
 	<!-- Ajout des import de script pour le style-->
 	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
