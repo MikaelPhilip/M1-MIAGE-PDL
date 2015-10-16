@@ -38,6 +38,10 @@ public class Traitement implements TraitementInter{
 	}
 
 	//@Override
+	/* 
+	 * @param : PCM whom Integrity needs to be checked
+	 * 
+	 */
 	public void pcmVerify(PCM pcm) {
         // We start by checking if the names of the products are not null
         for (Product product : pcm.getProducts()) {
