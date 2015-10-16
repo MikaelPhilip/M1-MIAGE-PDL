@@ -3,6 +3,8 @@ package main.traitement;
 import java.io.BufferedReader;
 import java.io.IOException;
 
+import org.opencompare.api.java.PCM;
+
 public interface TraitementInter {
 	/**
 	 * Charger un fichier pcm dans l'objet pcm (permettra de récuperer les données (features et tout le reste)
@@ -16,4 +18,10 @@ public interface TraitementInter {
 	 * @return
 	 */
 	public BufferedReader lirefichier(String nom_fichier);
+	
+	public void pcmVerify(PCM pcm);
+	
 }
+
+
+	
