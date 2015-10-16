@@ -3,13 +3,18 @@
 <head>
   <meta charset="utf-8">
   <title>Open Compare Chart</title>
+  <!--Base CSS-->
   <link rel="stylesheet" href="Bootstrap/css/bootstrap.css">
+  <!--Import de nos propres css/js-->
   <link rel="stylesheet" href="Style.css">
-  <script  type="text/javascript" src="Listener.js"></script>
-  <script  type="text/javascript" src="Script.js"></script>
+  <script type="text/javascript" src="Listener.js"></script>
+  <script type="text/javascript" src="Script.js"></script>
+  <!--Import pour le graphique-->
+  <script type="text/javascript" src="../Traitement/traitement.js"></script>
+  
 </head>
 <!--onload sert à lancer une méthode js lors du chargement (ex: onload="hello()")-->
-<body >
+<body onload="generate()">
 	<header class="page-header">
 		<div id="container">
 			<h1>Product chart</h1>
@@ -32,8 +37,7 @@
 				<div class="panel-heading">
 					<h3>Graphique</h3>
 				</div>
-				<div class="panel-body">
-					<!--C'est ici qu'on rajoutera nos données de filtre à partir du JSON-->
+				<div id="graphique" class="panel-body">
 				</div>
 			</div>
 		</div>
@@ -44,7 +48,8 @@
 	
 	<!-- Ajout des import de script pour le style-->
 	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+	<script type="text/javascript" src="http://code.highcharts.com/highcharts.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
 </body>
