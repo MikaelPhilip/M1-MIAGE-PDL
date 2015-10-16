@@ -28,9 +28,8 @@ public class Traitement implements TraitementInter{
         
         PCMLoader loader = new KMFJSONLoader();
         
-        //Récupération de la PCM
         PCM pcm = loader.load(pcmFile).get(0).getPcm();
-        //on teste l'intégrité de la PCM
+        //Call the method that checks PCM's integrity
         pcmVerify(pcm);
         
         setPcm(pcm);
@@ -38,32 +37,45 @@ public class Traitement implements TraitementInter{
 	}
 
 	//@Override
-	/* 
+	/** 
 	 * @param : PCM whom Integrity needs to be checked
-	 * 
-	 */
+	 * @throws : throw an exception if the PCM's integrity is not checked
+	 * This method check if products or features name are not null
+	 **/
 	public void pcmVerify(PCM pcm) {
-        // We start by checking if the names of the products are not null
+        // We start by checking if products'name are not null
         for (Product product : pcm.getProducts()) {
-        	if(product.getName()==null){
-        		System.out.println("product = NULL");
+        	try{
+        		if(product.getName()==null){
+        	          throw new TraitementPcmException();
+        	     }
+        	 }
+        	 catch(TraitementPcmException e){
+        	      //Message 
+        		 System.out.println("Un produit de la PCM est null. ");
+        	 }
+        	finally{
+        		//TODO : End of Programm
+        		
         	}
-        	else{
-        		System.out.println("product OK : "+product.getName());
-        	};
         }
         
-     // Then we check the names of the features are not null
+     // Then we check if features'name are not null
         for (Feature feature : pcm.getConcreteFeatures()){
-        	if(feature.getName()==null){
-        		System.out.println("feature = NULL");
+        	try{
+        		if(feature.getName()==null){
+       	          throw new TraitementPcmException();
+        		}
+       	     }catch(TraitementPcmException e) {
+       	    	 //Process message however you would like
+        		 System.out.println("Une caractéristique de la PCM est null. ");       	    	 
+       	     }
+        	finally{
+        		//TODO : End of Programm
+        		
         	}
-        	else{
-        		System.out.println("feature OK : " + feature.getName());
-        	};
-        }
-		System.out.println("Verif PCM terminée");
-	}
+       	 }
+}
 
 	@Override
 	public BufferedReader lirefichier(String nom_fichier) {
