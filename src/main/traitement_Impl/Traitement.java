@@ -24,7 +24,7 @@ public class Traitement implements TraitementInter{
         System.out.println(pcmFile.getClass());
         
         PCMLoader loader = new KMFJSONLoader();
-        pcm = loader.load(pcmFile).get(0).getPcm();
+        setPcm(loader.load(pcmFile).get(0).getPcm());
 	}
 
 	@Override
@@ -36,6 +36,14 @@ public class Traitement implements TraitementInter{
 			e.printStackTrace();
 		}
 		return bread;
+	}
+
+	public PCM getPcm() {
+		return pcm;
+	}
+
+	public void setPcm(PCM pcm) {
+		this.pcm = pcm;
 	}
 
 }
