@@ -1,4 +1,11 @@
-function generate(){
+//Fonction qui va lancer la génération des filtres et du graphiques aprés avori trouvé et charger un json
+function traitement(){
+	//TODO: Gestion JSON (chargement, création d'une var envoyer aux méthodes, etc...)
+	Generate();
+	GenerateFilter();
+}
+
+function Generate(){
 	// register our custom symbols to nvd3
 	// make sure your path is valid given any size because size scales if the chart scales.
 	nv.utils.symbolMap.set('thin-x', function(size) {
@@ -59,4 +66,40 @@ function LoadData(groups, points) { //# groups,# points per group
 		}
 	}
 	return data;
+}
+
+//Function for generation of all filters
+function GenerateFilter(){
+	//on récupére dans une var la partie filtre d enotre site
+	var filter = document.getElementById('filters');
+	//On va ensuite créer un element que l'on ajoutera dans cette partie
+	//Variables qui contiendra tout le code html des filtres 
+	var contents="";
+	/*On va rajouter dans content le hmtl de chaque type de filtre (syntaxe basé sur le confiugurator.html)*/
+	//Search
+	//TODO condition pour saovir si on a à rajouter une barre de recherche
+	contents+="<div class='page-header'>"
+			  +"<div class='least-content'>Recherche</div>"
+			  +"</div>"
+			  +"<div class='row-content'>"
+              +"<p class='list-group-item-text'>Product: <input class='form-control floating-label' type='text' placeholder='Find' ng-model='productFilter'></p>"
+			  +"<button class='btn btn-primary' type='button'>Rechercher</button>"
+			  +"</div>"
+			  +"<div class='list-group-separator'></div>"
+	//Checkbox
+	//TODO for dans le json pour voir si on des filtres de type checkbox
+	contents+="<div class='page-header'>"
+			 +"<p class='list-group-item-heading'>Caractéristiques</p>"
+			 +"</div>"
+             +"<p class='list-group-item-text' >"
+             +"<div class='checkbox checkbox-primary'>"
+             +"<label><input type='checkbox' name='critere1' value='1'> Caractéristiques</label>"
+             +"</div>"
+			 
+	//Barre d'intervalle
+	//TODO for dans le json pour voir si on des filtres de type barre d'intervalle
+	
+	//TODO ajouter d'autres types de filtres
+	//Ajout du contenu html crée
+	filter.innerHTML=contents;
 }
