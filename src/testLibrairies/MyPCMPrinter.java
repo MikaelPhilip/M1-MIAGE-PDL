@@ -1,6 +1,7 @@
 package testLibrairies;
 
 import org.opencompare.api.java.*;
+import org.opencompare.api.java.impl.ValueImpl;
 import org.opencompare.api.java.util.PCMVisitor;
 import org.opencompare.api.java.value.*;
 
@@ -22,15 +23,15 @@ public class MyPCMPrinter implements PCMVisitor {
         
         for (Product product : pcm.getProducts()) {
            System.out.println(product.getName());
-           System.out.println(product.getCells());
+      //  System.out.println(product.getCells());
             
             
-           
         }
 
         // Then, we use a visitor to print the content of the cells that represent a boolean value
         System.out.println("--- Boolean values ---");
         pcm.accept(this);
+   
 
     }
 
@@ -41,7 +42,7 @@ public class MyPCMPrinter implements PCMVisitor {
     public void visit(PCM pcm) {
         for (Product product : pcm.getProducts()) {
             product.accept(this);
-           //System.out.print( product.getName());
+          System.out.print( product.getName());
         }
     }
 
@@ -60,6 +61,14 @@ public class MyPCMPrinter implements PCMVisitor {
         for (Cell cell : product.getCells()) {
             cell.accept(this);
             System.out.println(cell.getContent());
+            pcm.Value kValue = null ;
+			ValueImpl.wrapValue(kValue);
+            pcm.Value k;
+            
+            
+            
+           // System.out.println(cell.getInterpretation());
+            
         }
     }
 
@@ -75,7 +84,8 @@ public class MyPCMPrinter implements PCMVisitor {
 
         // Print content of the cell if it is a boolean
         if (isBooleanCell) {
-        //   System.out.println(cell.getContent());
+          System.out.println(cell.getContent());
+          
         }
     }
 
@@ -101,7 +111,7 @@ public class MyPCMPrinter implements PCMVisitor {
     // pour recuperer integerValue
     @Override
     public void visit(IntegerValue integerValue) {
-    	System.out.print( "je suis integer "+integerValue.getValue());
+    	System.out.println( "je suis integer "+integerValue.getValue());
     }
 
     
