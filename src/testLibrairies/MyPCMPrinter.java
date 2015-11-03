@@ -1,5 +1,11 @@
 package testLibrairies;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.opencompare.api.java.*;
 import org.opencompare.api.java.impl.ValueImpl;
 import org.opencompare.api.java.util.PCMVisitor;
@@ -11,6 +17,13 @@ import org.opencompare.api.java.value.*;
 public class MyPCMPrinter implements PCMVisitor {
 
     private boolean isBooleanCell;
+    JSONArray ja = new JSONArray();
+    JSONObject obj = new JSONObject();
+
+    List l= new ArrayList();
+	HashMap<String, String> map1 = new  HashMap<String,String>();
+
+
 
     /**
      * Print some information contained in a PCM
@@ -20,18 +33,40 @@ public class MyPCMPrinter implements PCMVisitor {
 
         // We start by listing the names of the products
         System.out.println("--- Products ---");
-        
+    	HashMap<String, List> map = new  HashMap<String,List>();
+    	HashMap<String, String> filter = new  HashMap<String,String>();
+
+
         for (Product product : pcm.getProducts()) {
            System.out.println(product.getName());
       //  System.out.println(product.getCells());
+           
+           
+           // obj.put(product.getName(),map);
             
+            for (Cell cell : product.getCells()) {
+            
+            	 map.put(product.getName(),  product.getCells());
+            	// l.add(cell.getFeature().getName());
+            	// l.add(cell.getInterpretation()+"");
+            	 map1.put(cell.getFeature().getName(), cell.getInterpretation()+"");
+            
+            }
             
         }
+        l.add(map1);
+   	 map.put("filters",  l);
+
+      
+       
+        System.out.println(map);
+    //    System.out.println(obj);
 
         // Then, we use a visitor to print the content of the cells that represent a boolean value
         System.out.println("--- Boolean values ---");
         pcm.accept(this);
-   
+        
+
 
     }
 
@@ -60,7 +95,8 @@ public class MyPCMPrinter implements PCMVisitor {
     public void visit(Product product) {
         for (Cell cell : product.getCells()) {
             cell.accept(this);
-            System.out.println(cell.getContent());
+           System.out.println(cell.getInterpretation()+" "+" "+cell.getFeature().getName());
+            
             pcm.Value kValue = null ;
 			ValueImpl.wrapValue(kValue);
             pcm.Value k;
@@ -111,7 +147,7 @@ public class MyPCMPrinter implements PCMVisitor {
     // pour recuperer integerValue
     @Override
     public void visit(IntegerValue integerValue) {
-    	System.out.println( "je suis integer "+integerValue.getValue());
+    //	System.out.println( "je suis integer "+integerValue.getValue());
     }
 
     
@@ -143,7 +179,7 @@ public class MyPCMPrinter implements PCMVisitor {
     //pour recuperer stringValue
     @Override
     public void visit(StringValue stringValue) {
-    	System.out.print( "je suis string "+stringValue.getValue());
+    	//System.out.print( "je suis string "+stringValue.getValue());
     	
 
     }

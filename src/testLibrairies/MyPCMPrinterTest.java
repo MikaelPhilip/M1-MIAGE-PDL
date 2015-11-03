@@ -19,7 +19,7 @@ public class MyPCMPrinterTest {
     public void testMyPCMPrinter() throws IOException {
 
         // Load a PCM
-        File pcmFile = new File("pcms/paysIMG.pcm");
+        File pcmFile = new File("pcms/example.pcm");
       //  File pcmFile = new File("pcms/example.pcm");
         System.out.println(pcmFile.getClass());
         
