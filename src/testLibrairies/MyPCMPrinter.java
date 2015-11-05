@@ -30,7 +30,11 @@ public class MyPCMPrinter implements PCMVisitor {
      * @param pcm: PCM to print
      */
     public void print(PCM pcm) {
-
+        boolean filters=true;
+        String str_type_filter;
+        String [] str;
+        
+        
         // We start by listing the names of the products
         System.out.println("--- Products ---");
     	HashMap<String, List> map = new  HashMap<String,List>();
@@ -41,21 +45,35 @@ public class MyPCMPrinter implements PCMVisitor {
            System.out.println(product.getName());
       //  System.out.println(product.getCells());
            
-           
-           // obj.put(product.getName(),map);
+           map.put("\n"+product.getName(),  product.getCells());
+      
+			// obj.put(product.getName(),map);
             
+           if(filters){
             for (Cell cell : product.getCells()) {
             
-            	 map.put(product.getName(),  product.getCells());
+            	
             	// l.add(cell.getFeature().getName());
             	// l.add(cell.getInterpretation()+"");
-            	 map1.put(cell.getFeature().getName(), cell.getInterpretation()+"");
-            
+            	str_type_filter= cell.getInterpretation()+"";
+            	str_type_filter=str_type_filter.split("@")[0];
+            	str_type_filter=str_type_filter.split("\\.")[6];
+            	
+            	str_type_filter=str_type_filter.substring(0, str_type_filter.length()-4);
+            	if(str_type_filter=="NotAvailable"){
+            		str_type_filter="StringValue";
+            		
+            	}
+            			
+            	
+            	 map1.put(cell.getFeature().getName(),str_type_filter);
+            	 filters=false;
+            }
             }
             
         }
         l.add(map1);
-   	 map.put("filters",  l);
+        map.put("filters",  l);
 
       
        
@@ -95,7 +113,7 @@ public class MyPCMPrinter implements PCMVisitor {
     public void visit(Product product) {
         for (Cell cell : product.getCells()) {
             cell.accept(this);
-           System.out.println(cell.getInterpretation()+" "+" "+cell.getFeature().getName());
+           //System.out.println(cell.getInterpretation()+" "+" "+cell.getFeature().getName());
             
             pcm.Value kValue = null ;
 			ValueImpl.wrapValue(kValue);
