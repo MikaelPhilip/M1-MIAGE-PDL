@@ -14,12 +14,13 @@ import org.opencompare.api.java.Product;
 import org.opencompare.api.java.impl.io.KMFJSONLoader;
 import org.opencompare.api.java.io.PCMLoader;
 
+import main.generationJSON_impl.Generation;
 import main.traitement.TraitementInter;
 
 public class Traitement implements TraitementInter{
 
 	private PCM pcm;
-	
+	private Generation json ;
 	@Override
 	public void pcmLoad(String files) throws IOException {
 		//Load a PCM
@@ -57,6 +58,7 @@ public class Traitement implements TraitementInter{
         	finally{
         		//TODO : End of Programm
         		
+        		
         	}
         }
         
@@ -75,6 +77,13 @@ public class Traitement implements TraitementInter{
         		
         	}
        	 }
+        //TODO Verifier si la PCM a au moins deux caractéristiques numériques
+        
+        
+        json = new Generation();
+		json.generateJSON(pcm);
+		
+        
 }
 
 	@Override
