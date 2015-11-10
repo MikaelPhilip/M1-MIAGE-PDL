@@ -21,6 +21,7 @@ public class Traitement implements TraitementInter{
 
 	private PCM pcm;
 	private Generation json ;
+	
 	@Override
 	public void pcmLoad(String files) throws IOException {
 		//Load a PCM
@@ -32,9 +33,7 @@ public class Traitement implements TraitementInter{
         PCM pcm = loader.load(pcmFile).get(0).getPcm();
         //Call the method that checks PCM's integrity
         pcmVerify(pcm);
-        
         setPcm(pcm);
-        
 	}
 
 	//@Override
@@ -56,13 +55,11 @@ public class Traitement implements TraitementInter{
         		 System.out.println("Un produit de la PCM est null. ");
         	 }
         	finally{
-        		//TODO : End of Programm
-        		
-        		
+        		//End of Programm
+        		System.exit(0);
         	}
         }
-        
-     // Then we check if features'name are not null
+        // Then we check if features'name are not null
         for (Feature feature : pcm.getConcreteFeatures()){
         	try{
         		if(feature.getName()==null){
@@ -73,13 +70,25 @@ public class Traitement implements TraitementInter{
         		 System.out.println("Une caractéristique de la PCM est null. ");       	    	 
        	     }
         	finally{
-        		//TODO : End of Programm
-        		
+        		//End of Programm
+        		System.exit(0);
         	}
        	 }
         //TODO Verifier si la PCM a au moins deux caractéristiques numériques
-        
-        
+        int nbFeature=0; 
+        for (Feature feature : pcm.getConcreteFeatures()){
+        	//if the feature has an integer type
+        	if(feature.getName()==null){
+        		nbFeature++;
+        	}
+        }
+        //Test if there is at least 2 features which has an integer type
+        if (nbFeature<2){
+        	System.out.println("La PCM a moins de 2 caractéristiques numériques.");
+        	//End of Programm
+        	System.exit(0);
+        }
+
         json = new Generation();
 		json.generateJSON(pcm);
 		
