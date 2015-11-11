@@ -76,8 +76,10 @@ public class MyPCMPrinter implements PCMVisitor {
         map.put("filters",  l);
 
       
-       
+        System.out.println("---JSON----");
         System.out.println(map);
+        System.out.println(map1);
+        System.out.println("---FIN JSON----");
     //    System.out.println(obj);
 
         // Then, we use a visitor to print the content of the cells that represent a boolean value
