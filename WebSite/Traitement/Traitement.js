@@ -1,10 +1,42 @@
 //Fonction qui va lancer la génération des filtres et du graphiques aprés avori trouvé et charger un json
 function traitement(){
-	//TODO: Gestion JSON (chargement, création d'une var envoyer aux méthodes, etc...)
-	Generate();
-	GenerateFilter();
+	//create a listener when a file is selected: this listener launch treatement
+	document.getElementById('fileLoader').addEventListener("change", function(event){
+	//We launch treatement
+	LoadJson(event); //param: file selected
+});
 }
 
+//Function for load one of generates Json 
+function LoadJson(event){
+	var obj;
+	//create a reader
+	var reader = new FileReader();
+    reader.onload = onReaderLoad; //Call an internal function when reading text
+    reader.readAsText(event.target.files[0]);
+	 
+	//internal fonction for create an json obj with file
+	function onReaderLoad(event){
+        console.log(event.target.result);
+        var obj = JSON.parse(event.target.result);
+    }
+	//Checking obj
+	if(typeof obj =='object')
+	{
+		// It is JSON: call next treatement
+		Generate();
+		GenerateFilter();
+	}else{
+		if(obj ===false)
+		{
+			// the response was a string "false", parseJSON will convert it to boolean false
+			alert("Le chargement du JSON à echoué");
+		}else{
+			// the response was something else
+			alert("Erreur lors du chargement: Veuillez utiliser un fichier json valide");
+		}
+	}
+}
 function Generate(){
 	// register our custom symbols to nvd3
 	// make sure your path is valid given any size because size scales if the chart scales.

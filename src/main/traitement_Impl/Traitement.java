@@ -53,11 +53,9 @@ public class Traitement implements TraitementInter{
         	 catch(TraitementPcmException e){
         	      //Message 
         		 System.out.println("Un produit de la PCM est null. ");
-        	 }
-        	finally{
         		//End of Programm
-        		System.exit(0);
-        	}
+             	System.exit(0);
+        	 }
         }
         // Then we check if features'name are not null
         for (Feature feature : pcm.getConcreteFeatures()){
@@ -67,12 +65,10 @@ public class Traitement implements TraitementInter{
         		}
        	     }catch(TraitementPcmException e) {
        	    	 //Process message however you would like
-        		 System.out.println("Une caractéristique de la PCM est null. ");       	    	 
-       	     }
-        	finally{
+        		 System.out.println("Une caractéristique de la PCM est null. ");
         		//End of Programm
-        		System.exit(0);
-        	}
+             	System.exit(0);
+       	     }
        	 }
         //TODO Verifier si la PCM a au moins deux caractéristiques numériques
         int nbFeature=0; 
