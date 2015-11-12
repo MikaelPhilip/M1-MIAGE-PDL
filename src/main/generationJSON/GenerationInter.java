@@ -6,4 +6,5 @@ public interface GenerationInter {
 
 	
 	public void generateJSON(PCM pcm);
+	
 }

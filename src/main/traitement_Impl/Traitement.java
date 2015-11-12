@@ -76,14 +76,16 @@ public class Traitement implements TraitementInter{
         	//if the feature has an integer type
         	if(feature.getName()==null){
         		nbFeature++;
+        		
         	}
+        	//System.out.println(feature.getName()+ nbFeature);
         }
         //Test if there is at least 2 features which has an integer type
-        if (nbFeature<2){
+        /*if (nbFeature<2){
         	System.out.println("La PCM a moins de 2 caractéristiques numériques.");
         	//End of Programm
         	System.exit(0);
-        }
+        }*/
 
         json = new Generation();
 		json.generateJSON(pcm);
