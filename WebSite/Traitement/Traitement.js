@@ -15,28 +15,20 @@ function LoadJson(event){
     reader.onload = onReaderLoad; //Call an internal function when reading text
     reader.readAsText(event.target.files[0]);
 	 
-	//internal fonction for create an json obj with file
+	//internal fonction for create an json obj with file and launch treatment if it's ok
 	function onReaderLoad(event){
-        console.log(event.target.result);
-        var obj = JSON.parse(event.target.result);
-    }
-	//Checking obj
-	if(typeof obj =='object')
-	{
-		// It is JSON: call next treatement
-		Generate();
-		GenerateFilter();
-	}else{
-		if(obj ===false)
+		try{
+			console.log(event.target.result);
+			obj = JSON.parse(event.target.result);
+			Generate();
+			GenerateFilter();
+		}catch(e)
 		{
-			// the response was a string "false", parseJSON will convert it to boolean false
-			alert("Le chargement du JSON à echoué");
-		}else{
-			// the response was something else
 			alert("Erreur lors du chargement: Veuillez utiliser un fichier json valide");
 		}
-	}
+    }
 }
+//Fonction generate chart (dimension)
 function Generate(){
 	// register our custom symbols to nvd3
 	// make sure your path is valid given any size because size scales if the chart scales.
@@ -102,14 +94,14 @@ function LoadData(groups, points) { //# groups,# points per group
 
 //Function for generation of all filters
 function GenerateFilter(){
-	//on récupére dans une var la partie filtre d enotre site
+	//on récupére dans une var la partie filtre de notre site
 	var filter = document.getElementById('filters');
 	//On va ensuite créer un element que l'on ajoutera dans cette partie
 	//Variables qui contiendra tout le code html des filtres 
 	var contents="";
 	/*On va rajouter dans content le hmtl de chaque type de filtre (syntaxe basé sur le confiugurator.html)*/
 	//Search
-	//TODO condition pour saovir si on a à rajouter une barre de recherche
+	//TODO condition pour savoir si on a à rajouter une barre de recherche
 	contents+="<div class='page-header'>"
 			  +"<div class='least-content'>Recherche</div>"
 			  +"</div>"
