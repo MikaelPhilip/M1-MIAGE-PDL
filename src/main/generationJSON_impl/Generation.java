@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,19 +23,20 @@ import com.google.gson.Gson;
 import main.generationJSON.GenerationInter;
 
 public class Generation implements GenerationInter {
-	    JSONObject json = new JSONObject();
+	   
+	
+	JSONObject json = new JSONObject();
 	    
-	    JSONArray joo;
-	   	List<HashMap<String, String>> l= new ArrayList<HashMap<String, String>>();
-		HashMap<String, String> map1 = new  HashMap<String,String>();
-		
-		
+	   
+	  		
 		
 		
 		@Override
 		public void generateJSON(PCM pcm) {
 			// TODO Auto-generated method stub
 			
+			
+		    Map<String, String> map = new HashMap<String,String>();
 			 boolean filters=true;
 		        String str_type_filter;
 		        String [] str;
@@ -41,25 +44,25 @@ public class Generation implements GenerationInter {
 		        
 		        // We start by listing the names of the products
 		        System.out.println("--- Products ---");
-		    	HashMap<String, List> map = new  HashMap<String,List>();
-		    	HashMap<String, String> filter = new  HashMap<String,String>();
-		    	 JSONObject filterJSON 	=new  JSONObject();
+		    	
+		    	 JSONObject filterJSON = new  JSONObject();
 
 		        for (Product product : pcm.getProducts()) {
 		         //  System.out.println(product.getName());
 		      //  System.out.println(product.getCells());
 		           
-		           map.put(product.getName(),  product.getCells());
+		         
 		      
 					// obj.put(product.getName(),map);
 		        
 		          
-		   	    JSONObject jsonCell = new JSONObject();
+		        	JSONObject jsonCell = new JSONObject();
 
 		            for (Cell cell : product.getCells()) {
 		            	jsonCell.put(cell.getFeature().getName(), cell.getContent());
 		            	
 		            	if(filters){
+		            	// récuperer le type de Feature	
 		            	str_type_filter= cell.getInterpretation()+"";
 		            	str_type_filter=str_type_filter.split("@")[0];
 		            	str_type_filter=str_type_filter.split("\\.")[6];
@@ -68,41 +71,80 @@ public class Generation implements GenerationInter {
 		            	if(str_type_filter=="NotAvailable"){
 		            		str_type_filter="StringValue";
 		            	}
+		            	
+		            	
+		            	// tester le cell sous la forme entier suit une chaine de caractere 	
 		            	Pattern p = Pattern.compile("\\d.*") ; 
 		            	Matcher m = p.matcher(cell.getContent()) ;    
-		            	 boolean b = m.matches() ;
-		            	 
+		            	boolean b = m.matches() ;
+		            	           	 
 		            	if(b){
 		            		
 		            		str_type_filter="IntegerValue";
 		            	}
+		            	if(str_type_filter.equals("IntegerValue")){
+		            		
+		            		
+		            	}
 		            	
 		            	 filterJSON.put(cell.getFeature().getName(),str_type_filter);
-		            	 
-		            	}
+		            	 	            	}
 		          
 		            }
-		            filters=false;
-		           json.put(product.getName(), jsonCell);
-			        json.put("FILTERS",  filterJSON);
-
-		           
+		            
+		            
+			            filters=false;
+			            json.put(product.getName(), jsonCell);
+			           
 		        }
-		     
-		        
-		        l.add(map1);
+		    	json.put("FILTERS",  filterJSON);
+		       choixDimension(json.getJSONObject("FILTERS"));
+
 		        this.afficherJSON(json);
-		        map.put("filters",  l);
 		        
-			
+	
 		}
 		
+		
+		public void choixDimension(JSONObject filters){
+			
+			System.out.println("cle=" + filters);
+
+			for (Iterator iterator = filters.keys(); iterator.hasNext();) {
+	            Object cle = iterator.next();
+	            Object val = filters.get(String.valueOf(cle));
+	            
+	            if(val.equals("IntegerValue")){
+	            	
+	              	System.out.println("cle=" + cle + ", valeur=" + val);
+	            }
+	            
+	          
+	          }
+			
+			System.out.println(" S.V.P fait les choix au plus 4  dimensions ");
+			Scanner scanner = new Scanner(System.in);
+			String dimension = scanner.nextLine();
+			JSONObject jsonDimension = new JSONObject();
+			jsonDimension.put("dim1", dimension );
+			System.out.println("dimension "+ dimension);
+	        json.put("DIMENSIONS", jsonDimension);  	
+	            //System.out.println("cle=" + cle + ", valeur=" + val);
+	           
+	       }
+			
+			
+		
+		
+		
 		public void afficherJSON(JSONObject json){
-			   System.out.println(json);
+		    System.out.println(json);
 			for (Iterator iterator = json.keys(); iterator.hasNext();) {
 	            Object cle = iterator.next();
 	            Object val = json.get(String.valueOf(cle));
-	            System.out.println("cle=" + cle + ", valeur=" + val);
+	            JSONObject s = (JSONObject) json.get("FILTERS");
+	            //System.out.println("cle=" + cle + ", valeur=" + val);
+	          
 	          }
 			
 	        //TODO Verifier si la PCM a au moins deux caractéristiques numériques
