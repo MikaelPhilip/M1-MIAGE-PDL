@@ -1,3 +1,4 @@
+var json;
 //Fonction qui va lancer la génération des filtres et du graphiques aprés avori trouvé et charger un json
 function traitement(){
 	//create a listener when a file is selected: this listener launch treatement
@@ -9,7 +10,6 @@ function traitement(){
 
 //Function for load one of generates Json 
 function LoadJson(event){
-	var obj;
 	//create a reader
 	var reader = new FileReader();
     reader.onload = onReaderLoad; //Call an internal function when reading text
@@ -19,7 +19,7 @@ function LoadJson(event){
 	function onReaderLoad(event){
 		try{
 			console.log(event.target.result);
-			obj = JSON.parse(event.target.result);
+			json = JSON.parse(event.target.result);
 			Generate();
 			GenerateFilter();
 		}catch(e)
