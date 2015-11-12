@@ -70,27 +70,10 @@ public class Traitement implements TraitementInter{
              	System.exit(0);
        	     }
        	 }
-        //TODO Verifier si la PCM a au moins deux caractéristiques numériques
-        int nbFeature=0; 
-        for (Feature feature : pcm.getConcreteFeatures()){
-        	//if the feature has an integer type
-        	if(feature.getName()==null){
-        		nbFeature++;
-        		
-        	}
-        	//System.out.println(feature.getName()+ nbFeature);
-        }
-        //Test if there is at least 2 features which has an integer type
-        /*if (nbFeature<2){
-        	System.out.println("La PCM a moins de 2 caractéristiques numériques.");
-        	//End of Programm
-        	System.exit(0);
-        }*/
 
         json = new Generation();
 		json.generateJSON(pcm);
-		
-        
+  
 }
 
 	@Override

@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.opencompare.api.java.Cell;
+import org.opencompare.api.java.Feature;
 import org.opencompare.api.java.PCM;
 import org.opencompare.api.java.Product;
 
@@ -66,7 +67,6 @@ public class Generation implements GenerationInter {
 		            	str_type_filter=str_type_filter.substring(0, str_type_filter.length()-4);
 		            	if(str_type_filter=="NotAvailable"){
 		            		str_type_filter="StringValue";
-		            		
 		            	}
 		            	Pattern p = Pattern.compile("\\d.*") ; 
 		            	Matcher m = p.matcher(cell.getContent()) ;    
@@ -104,9 +104,23 @@ public class Generation implements GenerationInter {
 	            Object val = json.get(String.valueOf(cle));
 	            System.out.println("cle=" + cle + ", valeur=" + val);
 	          }
+			
+	        //TODO Verifier si la PCM a au moins deux caractéristiques numériques
+	     /*   int nbFeature=0; 
+	        for (Feature feature : pcm.getConcreteFeatures()){
+	        	//if the feature has an integer type
+	        	if(feature){
+	        		nbFeature++;
+	        		
+	        	}
+	        	//System.out.println(feature.getName()+ nbFeature);
+	        }
+	        //Test if there is at least 2 features which has an integer type
+	        if (nbFeature<2){
+	        	System.out.println("La PCM a moins de 2 caractéristiques numériques.");
+	        	//End of Programm
+	        	System.exit(0);
+	        }*/
+
 		}
-
-	
-	
-
 }
