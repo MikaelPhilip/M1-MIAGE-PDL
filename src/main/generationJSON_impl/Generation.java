@@ -27,7 +27,7 @@ public class Generation implements GenerationInter {
 	
 	JSONObject json = new JSONObject();
 	    
-	   
+	JSONObject jsonDimension;
 	  		
 		
 		
@@ -68,7 +68,7 @@ public class Generation implements GenerationInter {
 		            	str_type_filter=str_type_filter.split("\\.")[6];
 		            	
 		            	str_type_filter=str_type_filter.substring(0, str_type_filter.length()-4);
-		            	if(str_type_filter=="NotAvailable"){
+		            	if(str_type_filter.equals("NotAvailable")){
 		            		str_type_filter="StringValue";
 		            	}
 		            	
@@ -107,7 +107,7 @@ public class Generation implements GenerationInter {
 		
 		
 		public void choixDimension(JSONObject filters){
-			
+			String dim=""; 
 			System.out.println("cle=" + filters);
 
 			for (Iterator iterator = filters.keys(); iterator.hasNext();) {
@@ -121,17 +121,28 @@ public class Generation implements GenerationInter {
 	            
 	          
 	          }
-			
-			System.out.println(" S.V.P fait les choix au plus 4  dimensions ");
+			jsonDimension = new JSONObject();
+			int i=0;
 			Scanner scanner = new Scanner(System.in);
 			String dimension = scanner.nextLine();
-			JSONObject jsonDimension = new JSONObject();
-			jsonDimension.put("dim1", dimension );
+			dim=dimension;
+			while (i<4){
+			System.out.println(" S.V.P fait les choix au plus 4  dimensions ");
+			
+			dim=dimension;
+			if(!dim.equals("-1")){
+			jsonDimension.put(""+i, dimension );
 			System.out.println("dimension "+ dimension);
-	        json.put("DIMENSIONS", jsonDimension);  	
+			scanner = new Scanner(System.in);
+			dimension = scanner.nextLine();
+			}
+			
 	            //System.out.println("cle=" + cle + ", valeur=" + val);
 	           
-	       }
+	       i++;
+			}
+			json.put("DIMENSIONS", jsonDimension); 	
+		}
 			
 			
 		
