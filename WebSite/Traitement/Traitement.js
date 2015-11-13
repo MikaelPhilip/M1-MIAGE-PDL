@@ -20,16 +20,21 @@ function LoadJson(event){
 		try{
 			console.log(event.target.result);
 			json = JSON.parse(event.target.result);
-			Generate();
-			GenerateFilter();
 		}catch(e)
 		{
 			alert("Erreur lors du chargement: Veuillez utiliser un fichier json valide");
 		}
+		GenerateFilter(json);
+		Generate(json);	
     }
 }
 //Fonction generate chart (dimension)
-function Generate(){
+function Generate(json){
+	//TODO:Création
+	//TODO:Lecture de l'objet dimension pour les axes x et y et taille/couleur
+	//TODO:Placement
+	//TODO:Appelle pour données
+	//TODO:Generation
 	// register our custom symbols to nvd3
 	// make sure your path is valid given any size because size scales if the chart scales.
 	nv.utils.symbolMap.set('thin-x', function(size) {
@@ -90,11 +95,20 @@ function LoadData(groups, points) { //# groups,# points per group
 		}
 	}
 	return data;
+	
+	/*TODO: Sanaa : Mettre en commentaire la generation automatique et commencer a traiter le json.
+	C'est à dire: paarcourir tout les objets de JSON (ne rien faire si l'objet est le filtre): et récuperer pour chaque objet le couple caractéristique/donnée et juste l'afficher (console.log)*/
 }
 
 //Function for generation of all filters
-function GenerateFilter(){
-	//on récupére dans une var la partie filtre de notre site
+function GenerateFilter(json){
+	//TEST de recupération et d'affichage
+	console.log(json["FILTERS"]);
+		$.each(json["FILTERS"], function(index, value) {
+		console.log(value);
+	}); 
+	//TEST: recupération du json et affichage
+	//On récupére dans une var la partie filtre de notre site
 	var filter = document.getElementById('filters');
 	//On va ensuite créer un element que l'on ajoutera dans cette partie
 	//Variables qui contiendra tout le code html des filtres 
