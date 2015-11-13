@@ -77,17 +77,14 @@ public class Generation implements GenerationInter {
 		            	Pattern p = Pattern.compile("\\d.*") ; 
 		            	Matcher m = p.matcher(cell.getContent()) ;    
 		            	boolean b = m.matches() ;
-		            	           	 
+		           	 
 		            	if(b){
-		            		
-		            		str_type_filter="IntegerValue";
-		            	}
-		            	if(str_type_filter.equals("IntegerValue")){
-		            		
-		            		
+		            	  	  
+		            		str_type_filter="RealValue";
+		            		  
 		            	}
 		            	
-		            	 filterJSON.put(cell.getFeature().getName(),str_type_filter);
+		   		            	 filterJSON.put(cell.getFeature().getName(),str_type_filter);
 		            	 	            	}
 		          
 		            }
@@ -106,13 +103,13 @@ public class Generation implements GenerationInter {
 		}
 		
 		
-		public void choixDimension(JSONObject filters){
+		public void choixDimension(JSONObject dimensions){
 			String dim=""; 
-			System.out.println("cle=" + filters);
-
-			for (Iterator iterator = filters.keys(); iterator.hasNext();) {
+			System.out.println("cle=" + dimensions);
+			//Afficher tous les dimensions IntegerValue
+			for (Iterator iterator = dimensions.keys(); iterator.hasNext();) {
 	            Object cle = iterator.next();
-	            Object val = filters.get(String.valueOf(cle));
+	            Object val = dimensions.get(String.valueOf(cle));
 	            
 	            if(val.equals("IntegerValue")){
 	            	
@@ -122,21 +119,29 @@ public class Generation implements GenerationInter {
 	          
 	          }
 			jsonDimension = new JSONObject();
-			int i=0;
+			int i=1,j=4;
+			System.out.println(" S.V.P fait les choix au plus "+j+"  dimensions -1 pour exit");
+			
+			
+			// Lire les choix des dimensions 
 			Scanner scanner = new Scanner(System.in);
 			String dimension = scanner.nextLine();
 			dim=dimension;
-			while (i<4){
-			System.out.println(" S.V.P fait les choix au plus 4  dimensions ");
 			
+			while (i<=4){
+			
+			j--;
 			dim=dimension;
 			if(!dim.equals("-1")){
 			jsonDimension.put(""+i, dimension );
-			System.out.println("dimension "+ dimension);
+			System.out.println("DIMENSION CHOISI "+ dimension);
+			if(i<4){
+			System.out.println(" S.V.P fait les choix au plus "+j+"  dimensions -1 pour exit");
 			scanner = new Scanner(System.in);
 			dimension = scanner.nextLine();
+			dim=dimension;
 			}
-			
+			}
 	            //System.out.println("cle=" + cle + ", valeur=" + val);
 	           
 	       i++;
