@@ -102,18 +102,111 @@ function LoadData(groups, points) { //# groups,# points per group
 
 //Function for generation of all filters
 function GenerateFilter(json){
-	//TEST de recupération et d'affichage
-	console.log(json["FILTERS"]);
-		$.each(json["FILTERS"], function(index, value) {
-		console.log(value);
-	}); 
-	//TEST: recupération du json et affichage
 	//On récupére dans une var la partie filtre de notre site
 	var filter = document.getElementById('filters');
 	//On va ensuite créer un element que l'on ajoutera dans cette partie
 	//Variables qui contiendra tout le code html des filtres 
 	var contents="";
-	/*On va rajouter dans content le hmtl de chaque type de filtre (syntaxe basé sur le confiugurator.html)*/
+	var contentsCheckbox="<div class='page-header'>"
+	+"<p class='list-group-item-heading'>Caractéristiques</p>"
+	+"</div>";
+	var contentsString="";
+	var contentsNumber="";
+	//Test print object filters
+	//console.log(json["FILTERS"]);
+	//for each element in json,check his type and add content in filter part
+	$.each(json["FILTERS"], function(name, type) {
+		if (type=="BooleanValue"){
+			contentsCheckbox+="<p class='list-group-item-text' >"
+             +"<div class='checkbox checkbox-primary'>"
+             +"<label><input type='checkbox' name=chbx"+name+" value='chbx"+name+"'>"+name+"</label>"
+             +"</div>";
+		}else if (type=="IntegerValue"){
+			//Search the max and min value for this filter
+			var min;
+			var max;
+			//for each product we get his list of features
+			$.each(json, function(i, product) {
+				if (i != "FILTERS" && i !="DIMENSION"){
+					var value = parseInt(product[name],10);
+					//we search value for feature == name (feature for filter)
+					//check if it's first time we search min value
+					if(typeof min === 'undefined'){
+						min=value;
+					}
+					//check if it's first time we search max value
+					if(typeof max === 'undefined'){
+						max=value;
+					}
+					//check if his value < min
+					if(value < min){
+						min=value;
+					}
+					//check if his value > max
+					if(value > max){
+						max=value;
+					}
+				}
+			});
+			contentsNumber+="<p>"+name+".Type: "+type+",min: "+min+",max: "+max+"</p>";
+		}else if (type=="FloatValue"){
+			//Search the max and min value for this filter
+			var min;
+			var max;
+			//for each product we get his list of features
+			$.each(json, function(i, product) {
+				if (i != "FILTERS" && i !="DIMENSION"){
+					var value = parseFloat(product[name],10);
+					//we search value for feature == name (feature for filter)
+					//check if it's first time we search min value
+					if(typeof min === 'undefined'){
+						min=value;
+					}
+					//check if it's first time we search max value
+					if(typeof max === 'undefined'){
+						max=value;
+					}
+					//check if his value < min
+					if(value < min){
+						min=value;
+					}
+					//check if his value > max
+					if(value > max){
+						max=value;
+					}
+				}
+			});
+			contentsNumber+="<p>"+name+".Type: "+type+",min: "+min+",max: "+max+"</p>";
+		}else if (type=="StringValue"){
+			//Create header of this list
+			contentsString+="<div class='page-header'>"
+			+"<p class='list-group-item-heading'>"+name+"</p>"
+			+"</div>";
+			//Serch each string value and make a list of check box
+			//List of value
+			var ArrValue = [];
+			$.each(json, function(i, product) {
+				if (i != "FILTERS" && i !="DIMENSION"){			
+					ArrValue.push(product[name]);		
+				}
+			});
+			
+			//Delete duplicate value 
+			var ArrValueUn = ArrValue.filter(function(elem, pos) {return ArrValue.indexOf(elem) == pos;}); 
+			$.each(ArrValueUn, function(i,value) {
+			//Now we complete html with the list
+			contentsString+="<p class='list-group-item-text' >"
+					+"<div class='checkbox checkbox-primary'>"
+					+"<label><input type='checkbox' name=chbx"+name+""+value+" value='chbx"+name+""+value+"'>"+value+"</label>"
+					+"</div>";
+			});
+		}
+	}); 
+	//Ajout du contenu html crée
+	contents=contentsCheckbox+contentsNumber+contentsString;
+	filter.innerHTML=contents;
+	
+	/*On va rajouter dans content le hmtl de chaque type de filtre (syntaxe basé sur le confiugurator.html)
 	//Search
 	//TODO condition pour savoir si on a à rajouter une barre de recherche
 	contents+="<div class='page-header'>"
@@ -139,5 +232,5 @@ function GenerateFilter(json){
 	
 	//TODO ajouter d'autres types de filtres
 	//Ajout du contenu html crée
-	filter.innerHTML=contents;
+	filter.innerHTML=contents; */
 }
