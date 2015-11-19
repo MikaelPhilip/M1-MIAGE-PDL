@@ -1,8 +1,10 @@
 package main.generationJSON_impl;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -16,6 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.opencompare.api.java.Cell;
 import org.opencompare.api.java.Feature;
@@ -150,8 +153,9 @@ public class Generation implements GenerationInter {
 
             // Always wrap FileReader in BufferedReader.
             BufferedReader bufferedReader =  new BufferedReader(fileReader);
-
+            System.out.println( bufferedReader.lines().toString());
             while((dimension = bufferedReader.readLine()) != null) {
+            	
                 System.out.println(dimension);
                 
                 dim = dimension;
@@ -245,22 +249,29 @@ public class Generation implements GenerationInter {
 		}*/
 		// System.out.println("cle=" + cle + ", valeur=" + val);
 		
-
 		json.put("DIMENSIONS", jsonDimension);
 	}
 
 	public void afficherJSON(JSONObject json) {
-		System.out.println("JSON Object: "+json);
+		System.out.println("JSON Object::: "+json);
+		if(isJSONValid(json)){
 		try {
 			String filepath = "./json/generation.json";
 		
-			FileWriter file = new FileWriter(filepath) ;
-			file.write(json.toString());
+			File file = new File(filepath);
+			FileWriter fw = new FileWriter(file);
+			BufferedWriter bw = new BufferedWriter(fw);
+			bw.write(json.toString());
+			bw.close();
+			
 			
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}}
+		else {
+			System.out.println("error JSON Object: ");
+		}
 		for (Iterator iterator = json.keys(); iterator.hasNext();) {
 			Object cle = iterator.next();
 			Object val = json.get(String.valueOf(cle));
@@ -282,4 +293,16 @@ public class Generation implements GenerationInter {
 		 */
 
 	}
+	public boolean isJSONValid(JSONObject json) throws JSONException {
+	    try {
+	        
+	    	
+	    	
+	    } catch (JSONException ex) {
+	    }
+	    return true;
+	}
+	
+	
+	
 }
