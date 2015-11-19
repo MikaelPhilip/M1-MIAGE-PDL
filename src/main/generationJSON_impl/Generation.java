@@ -1,5 +1,11 @@
 package main.generationJSON_impl;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,7 +33,7 @@ public class Generation implements GenerationInter {
 
 	JSONObject json = new JSONObject();
 
-	JSONObject jsonDimension;
+	JSONObject jsonDimension; 
 
 	@Override
 	public void generateJSON(PCM pcm) {
@@ -88,10 +94,29 @@ public class Generation implements GenerationInter {
 
 		}
 		json.put("FILTERS", filterJSON);
+		this.vérifDimension(json.getJSONObject("FILTERS"));
 		choixDimension(json.getJSONObject("FILTERS"));
 
 		this.afficherJSON(json);
 
+	}
+
+	private void vérifDimension(JSONObject jsonFilters) {
+		// TODO Auto-generated method stub
+		int nbDimension =0;
+		for (Iterator iterator = jsonFilters.keys(); iterator.hasNext();) {
+			Object cle = iterator.next();
+			Object val = jsonFilters.get(String.valueOf(cle));
+
+			if (val.equals("RealValue")) {
+				
+				nbDimension++;
+
+				System.out.println("cle=" + cle + ", valeur=" + val);
+			}
+
+		}
+		
 	}
 
 	public void choixDimension(JSONObject dimensionsJSON) {
@@ -111,15 +136,79 @@ public class Generation implements GenerationInter {
 		}
 		jsonDimension = new JSONObject();
 		int i = 1, j = 4;
-		System.out.println(" S.V.P fait les choix au plus " + j + "  dimensions -1 pour exit");
+//		System.out.println(" S.V.P fait les choix au plus " + j + "  dimensions -1 pour exit");
+		
+		// The name of the file to open.
+        String fileName = "./testParameters/parametreDimension.txt";
 
+        // This will reference one line at a time
+        String dimension = null;
+
+        try {
+            // FileReader reads text files in the default encoding.
+            FileReader fileReader = new FileReader(fileName);
+
+            // Always wrap FileReader in BufferedReader.
+            BufferedReader bufferedReader =  new BufferedReader(fileReader);
+
+            while((dimension = bufferedReader.readLine()) != null) {
+                System.out.println(dimension);
+                
+                dim = dimension;
+    			if (!dim.equals("-1")) {
+    				// vérification la dimension choisi n'est pas choidi
+    				if (jsonDimension.has(dim)) {
+    					System.out.println(" cette dimension est choisi");
+
+    				}
+
+    				else if (!dimensionsJSON.has(dim)) {
+    					// vérification la dimension choisi est existe dans les
+    					// filteres
+
+    					System.out.println("ATTENTION : Cette dimension n'existe pas ");
+    				}
+
+    				else {
+    					// ajout la dimension choisi
+    					jsonDimension.put(dimension, "" + i);
+    					j--;
+    					i++;
+    				}
+    			} else {
+    				System.out.println("jsonDimension = " + jsonDimension);
+
+    				//System.exit(0);
+    			}
+                
+            }   
+
+            // Always close files.
+            bufferedReader.close();         
+        }
+        catch(FileNotFoundException ex) {
+            System.out.println(
+                "Unable to open file '" + 
+                fileName + "'");                
+        }
+        catch(IOException ex) {
+            System.out.println(
+                "Error reading file '" 
+                + fileName + "'");                  
+            // Or we could just do this: 
+            // ex.printStackTrace();
+        }
+		
+		
+		
+		
 		// Lire les choix des dimensions
-		Scanner scanner = new Scanner(System.in);
+		/*Scanner scanner = new Scanner(System.in);
 		String dimension = scanner.nextLine();
 		dim = dimension;
 
-		while (i <= 4) {
-
+		while (i <= 4 ) {
+			
 			dim = dimension;
 			if (!dim.equals("-1")) {
 				// vérification la dimension choisi n'est pas choidi
@@ -145,9 +234,7 @@ public class Generation implements GenerationInter {
 				System.out.println("jsonDimension = " + jsonDimension);
 
 				System.exit(0);
-
 			}
-
 			if (i <= 4) {
 				System.out.println(" S.V.P fait les choix au plus " + j + "  dimensions -1 pour exit");
 				scanner = new Scanner(System.in);
@@ -155,15 +242,25 @@ public class Generation implements GenerationInter {
 				dim = dimension;
 			}
 
-		}
+		}*/
 		// System.out.println("cle=" + cle + ", valeur=" + val);
-		System.out.println("jsonDimension = " + jsonDimension);
+		
 
 		json.put("DIMENSIONS", jsonDimension);
 	}
 
 	public void afficherJSON(JSONObject json) {
-		System.out.println(json);
+		System.out.println("JSON Object: "+json);
+		try {
+			String filepath = "./json/generation.json";
+		
+			FileWriter file = new FileWriter(filepath) ;
+			file.write(json.toString());
+			
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		for (Iterator iterator = json.keys(); iterator.hasNext();) {
 			Object cle = iterator.next();
 			Object val = json.get(String.valueOf(cle));
