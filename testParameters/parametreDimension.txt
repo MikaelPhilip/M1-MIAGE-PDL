@@ -1,0 +1,5 @@
+Viewfinder coverage
+ISO min
+Metering pixels
+LCD monitor
+-1
