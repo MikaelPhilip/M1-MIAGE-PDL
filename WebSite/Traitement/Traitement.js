@@ -1,15 +1,22 @@
 var json;
 //Fonction qui va lancer la génération des filtres et du graphiques aprés avori trouvé et charger un json
 function traitement(){
+	/* functionality for allow user to choose json
 	//create a listener when a file is selected: this listener launch treatement
 	document.getElementById('fileLoader').addEventListener("change", function(event){
 	//We launch treatement
 	LoadJson(event); //param: file selected
-});
+	});*/
+	//Neutralisation du cache pour éviter de conserver des vielles données de json
+	$(document).ready(function() {
+		$.ajaxSetup({ cache: false });
+	});
+	LoadJson();
 }
 
 //Function for load one of generates Json 
-function LoadJson(event){
+function LoadJson(){
+	/* functionality for allow user to choose json
 	//create a reader
 	var reader = new FileReader();
     reader.onload = onReaderLoad; //Call an internal function when reading text
@@ -27,6 +34,17 @@ function LoadJson(event){
 		GenerateFilter(json);
 		Generate(json);	
     }
+	*/
+	//Serch a specific json file in file,if parse fail an error message appear
+	$.get("../../json/generation.json").success(function(file){	
+		json = file;
+		GenerateFilter(json);
+		Generate(json);	
+	})
+	.fail(function(jqXHR, status, error){
+       alert("Erreur lors du chargement: Veuillez utiliser un fichier json valide.Message: "+ error);
+    });
+
 }
 //Fonction generate chart (dimension)
 function Generate(json){
@@ -149,7 +167,7 @@ function GenerateFilter(json){
 				}
 			});
 			contentsNumber+="<p>"+name+".Type: "+type+",min: "+min+",max: "+max+"</p>";
-		}else if (type=="FloatValue"){
+		}else if (type=="RealValue"){
 			//Search the max and min value for this filter
 			var min;
 			var max;
