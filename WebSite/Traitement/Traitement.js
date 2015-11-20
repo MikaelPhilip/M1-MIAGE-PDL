@@ -12,6 +12,9 @@ function traitement(){
 		$.ajaxSetup({ cache: false });
 	});
 	LoadJson();
+	//Création de l'objet Slider With JQuery
+	$("#ex2").slider({});
+	
 }
 
 //Function for load one of generates Json 
