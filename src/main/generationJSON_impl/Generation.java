@@ -4,31 +4,22 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
+
 import org.opencompare.api.java.Cell;
-import org.opencompare.api.java.Feature;
 import org.opencompare.api.java.PCM;
 import org.opencompare.api.java.Product;
-import org.opencompare.api.java.value.IntegerValue;
+import org.json.JSONObject;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 
 import main.generationJSON.GenerationInter;
 
@@ -36,7 +27,9 @@ public class Generation implements GenerationInter {
 
 	JSONObject json = new JSONObject();
 
-	JSONObject jsonDimension; 
+	JSONObject jsonDimension;
+	String filepath;
+
 
 	@Override
 	public void generateJSON(PCM pcm) {
@@ -106,27 +99,27 @@ public class Generation implements GenerationInter {
 
 	private void vérifDimension(JSONObject jsonFilters) {
 		// TODO Auto-generated method stub
-		int nbDimension =0;
+		int nbDimension = 0;
 		for (Iterator iterator = jsonFilters.keys(); iterator.hasNext();) {
 			Object cle = iterator.next();
 			Object val = jsonFilters.get(String.valueOf(cle));
 
 			if (val.equals("RealValue")) {
-				
+
 				nbDimension++;
 
 				System.out.println("cle=" + cle + ", valeur=" + val);
 			}
 
 		}
-		
+
 	}
 
 	public void choixDimension(JSONObject dimensionsJSON) {
-
+		
 		String dim = "";
-		System.out.println("cle=" + dimensionsJSON);
-		// Afficher tous les dimensions IntegerValue
+		
+				// Afficher tous les dimensions IntegerValue
 		for (Iterator iterator = dimensionsJSON.keys(); iterator.hasNext();) {
 			Object cle = iterator.next();
 			Object val = dimensionsJSON.get(String.valueOf(cle));
@@ -137,141 +130,139 @@ public class Generation implements GenerationInter {
 			}
 
 		}
+		System.out.println("cle=" + dimensionsJSON);
 		jsonDimension = new JSONObject();
 		int i = 1, j = 4;
-//		System.out.println(" S.V.P fait les choix au plus " + j + "  dimensions -1 pour exit");
-		
+		int limitDim;
+		// System.out.println(" S.V.P fait les choix au plus " + j + "
+		// dimensions -1 pour exit");
+
 		// The name of the file to open.
-        String fileName = "./testParameters/parametreDimension.txt";
+		String fileName = "./testParameters/parametreDimension.txt";
 
-        // This will reference one line at a time
-        String dimension = null;
+		// This will reference one line at a time
+		String dimension = null;
 
-        try {
-            // FileReader reads text files in the default encoding.
-            FileReader fileReader = new FileReader(fileName);
+		try {
+			// FileReader reads text files in the default encoding.
+			FileReader fileReader = new FileReader(fileName);
 
-            // Always wrap FileReader in BufferedReader.
-            BufferedReader bufferedReader =  new BufferedReader(fileReader);
-            System.out.println( bufferedReader.lines().toString());
-            while((dimension = bufferedReader.readLine()) != null) {
-            	
-                System.out.println(dimension);
-                
-                dim = dimension;
-    			if (!dim.equals("-1")) {
-    				// vérification la dimension choisi n'est pas choidi
-    				if (jsonDimension.has(dim)) {
-    					System.out.println(" cette dimension est choisi");
+			// Always wrap FileReader in BufferedReader.
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
+			System.out.println(bufferedReader.lines().toString());
+			System.out.println("jsonDimension = " + dimensionsJSON.length());
 
-    				}
+			switch (dimensionsJSON.length()) {
 
-    				else if (!dimensionsJSON.has(dim)) {
-    					// vérification la dimension choisi est existe dans les
-    					// filteres
+			case 2:
+				limitDim = 2;
+				break;
+			case 3:
+				limitDim = 3;
+				break;
+			default:
+				limitDim=4;
 
-    					System.out.println("ATTENTION : Cette dimension n'existe pas ");
-    				}
+			}
 
-    				else {
-    					// ajout la dimension choisi
-    					jsonDimension.put(dimension, "" + i);
-    					j--;
-    					i++;
-    				}
-    			} else {
-    				System.out.println("jsonDimension = " + jsonDimension);
+			while ((dimension = bufferedReader.readLine()) != null) {
 
-    				//System.exit(0);
-    			}
-                
-            }   
+				System.out.println(dimension);
+				if (i <= limitDim) {
+					dim = dimension;
+					if (!dim.equals("-1")) {
+						// vérification la dimension choisi n'est pas choidi
+						if (jsonDimension.has(dim)) {
+							System.out.println(" cette dimension est choisi");
 
-            // Always close files.
-            bufferedReader.close();         
-        }
-        catch(FileNotFoundException ex) {
-            System.out.println(
-                "Unable to open file '" + 
-                fileName + "'");                
-        }
-        catch(IOException ex) {
-            System.out.println(
-                "Error reading file '" 
-                + fileName + "'");                  
-            // Or we could just do this: 
-            // ex.printStackTrace();
-        }
-		
-		
-		
-		
+						}
+
+						else if (!dimensionsJSON.has(dim)) {
+							// vérification la dimension choisi est existe dans
+							// les
+							// filteres
+
+							System.out.println("ATTENTION : Cette dimension n'existe pas ");
+						}
+
+						else {
+							// ajout la dimension choisi
+							jsonDimension.put(dimension, "" + i);
+							j--;
+							i++;
+						}
+					}
+				}
+
+			}
+
+			// Always close files.
+			bufferedReader.close();
+		} catch (FileNotFoundException ex) {
+			System.out.println("Unable to open file '" + fileName + "'");
+		} catch (IOException ex) {
+			System.out.println("Error reading file '" + fileName + "'");
+			// Or we could just do this:
+			// ex.printStackTrace();
+		}
+		System.out.println("jsonDimension = " + jsonDimension);
+
 		// Lire les choix des dimensions
-		/*Scanner scanner = new Scanner(System.in);
-		String dimension = scanner.nextLine();
-		dim = dimension;
-
-		while (i <= 4 ) {
-			
-			dim = dimension;
-			if (!dim.equals("-1")) {
-				// vérification la dimension choisi n'est pas choidi
-				if (jsonDimension.has(dim)) {
-					System.out.println(" cette dimension est choisi");
-
-				}
-
-				else if (!dimensionsJSON.has(dim)) {
-					// vérification la dimension choisi est existe dans les
-					// filteres
-
-					System.out.println("ATTENTION : Cette dimension n'existe pas ");
-				}
-
-				else {
-					// ajout la dimension choisi
-					jsonDimension.put(dimension, "" + i);
-					j--;
-					i++;
-				}
-			} else {
-				System.out.println("jsonDimension = " + jsonDimension);
-
-				System.exit(0);
-			}
-			if (i <= 4) {
-				System.out.println(" S.V.P fait les choix au plus " + j + "  dimensions -1 pour exit");
-				scanner = new Scanner(System.in);
-				dimension = scanner.nextLine();
-				dim = dimension;
-			}
-
-		}*/
+		/*
+		 * Scanner scanner = new Scanner(System.in); String dimension =
+		 * scanner.nextLine(); dim = dimension;
+		 * 
+		 * while (i <= 4 ) {
+		 * 
+		 * dim = dimension; if (!dim.equals("-1")) { // vérification la
+		 * dimension choisi n'est pas choidi if (jsonDimension.has(dim)) {
+		 * System.out.println(" cette dimension est choisi");
+		 * 
+		 * }
+		 * 
+		 * else if (!dimensionsJSON.has(dim)) { // vérification la dimension
+		 * choisi est existe dans les // filteres
+		 * 
+		 * System.out.println("ATTENTION : Cette dimension n'existe pas "); }
+		 * 
+		 * else { // ajout la dimension choisi jsonDimension.put(dimension, "" +
+		 * i); j--; i++; } } else { System.out.println("jsonDimension = " +
+		 * jsonDimension);
+		 * 
+		 * System.exit(0); } if (i <= 4) { System.out.println(
+		 * " S.V.P fait les choix au plus " + j + "  dimensions -1 pour exit");
+		 * scanner = new Scanner(System.in); dimension = scanner.nextLine(); dim
+		 * = dimension; }
+		 * 
+		 * }
+		 */
 		// System.out.println("cle=" + cle + ", valeur=" + val);
-		
+
 		json.put("DIMENSIONS", jsonDimension);
 	}
 
 	public void afficherJSON(JSONObject json) {
-		System.out.println("JSON Object::: "+json);
-		if(isJSONValid(json)){
-		try {
-			String filepath = "./json/generation.json";
-		
-			File file = new File(filepath);
-			FileWriter fw = new FileWriter(file);
-			BufferedWriter bw = new BufferedWriter(fw);
-			bw.write(json.toString());
-			bw.close();
-			
-			
+		System.out.println("JSON Object: " + json);
+		if (isJSONValid(json)) {
+			try {
+				filepath = "./json/generation.json";
+
+				File file = new File(filepath);
+				FileWriter fw = new FileWriter(file);
+				BufferedWriter bw = new BufferedWriter(fw);
+				bw.write(json.toString());
+				bw.close();
+
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}}
-		else {
+			}
+		} else {
 			System.out.println("error JSON Object: ");
 		}
+		
+		
+	
 		for (Iterator iterator = json.keys(); iterator.hasNext();) {
 			Object cle = iterator.next();
 			Object val = json.get(String.valueOf(cle));
@@ -293,16 +284,19 @@ public class Generation implements GenerationInter {
 		 */
 
 	}
+
 	public boolean isJSONValid(JSONObject json) throws JSONException {
-	    try {
-	        
-	    	
-	    	
-	    } catch (JSONException ex) {
-	    }
-	    return true;
+		try {
+			
+			
+		} catch (JSONException ex) {
+			
+		
+			
+			return false;
+		}
+
+		return true;
 	}
-	
-	
-	
+
 }
