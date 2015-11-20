@@ -12,6 +12,7 @@ function traitement(){
 		$.ajaxSetup({ cache: false });
 	});
 	LoadJson();
+	browseJson(event);
 }
 
 //Function for load one of generates Json 
@@ -117,6 +118,37 @@ function LoadData(groups, points) { //# groups,# points per group
 	/*TODO: Sanaa : Mettre en commentaire la generation automatique et commencer a traiter le json.
 	C'est à dire: paarcourir tout les objets de JSON (ne rien faire si l'objet est le filtre): et récuperer pour chaque objet le couple caractéristique/donnée et juste l'afficher (console.log)*/
 }
+
+function browseJson(event){
+	//create a reader
+	var reader = new FileReader();
+    reader.onload = onReaderLoad; //Call an internal function when reading text
+    reader.readAsText(event.target.files[0]);
+	 
+	//internal fonction for create an json obj with file and launch treatment if it's ok
+	function onReaderLoad(event){
+		try{
+			json = JSON.parse(event.target.result);
+			console.log(json);
+			// parcourir le premier tableau Json pour recuperer les cle et les objets B associe
+			for(var value in json){
+			//parcourir l objet B pour recupere les cle et les valeur qui sont dans B
+			    json2  = json[value];
+			    // Pour chaque gRand objet on affiche les petits objets cle/valeur
+			    
+			 	for(var key in json2){
+			 	 if(value != "FILTERS"){
+            		console.log(value + " "+key +" -> "+ json2[key]);
+            	  }
+     		 	}
+     		 }
+		}catch(e)
+		{
+			alert("Erreur lors du chargement: Veuillez utiliser un fichier json valide");
+		}	
+    }
+}
+
 
 //Function for generation of all filters
 function GenerateFilter(json){
