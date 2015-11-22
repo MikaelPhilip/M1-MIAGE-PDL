@@ -12,9 +12,6 @@ function traitement(){
 		$.ajaxSetup({ cache: false });
 	});
 	LoadJson();
-	//Création de l'objet Slider With JQuery
-	$("#ex2").slider({});
-	
 }
 
 //Function for load one of generates Json 
@@ -52,16 +49,7 @@ function LoadJson(){
 }
 //Fonction generate chart (dimension)
 function Generate(json){
-	/*// register our custom symbols to nvd3
-	// make sure your path is valid given any size because size scales if the chart scales.
-	nv.utils.symbolMap.set('thin-x', function(size) {
-	size = Math.sqrt(size);
-	return 'M' + (-size/2) + ',' + (-size/2) +
-	'l' + size + ',' + size +
-	'm0,' + -(size) +
-	'l' + (-size) + ',' + size;
-	});*/
-	
+
 	// create the chart
 	var chart; //Var Chart
 	nv.addGraph(function() {
@@ -92,21 +80,7 @@ function Generate(json){
 }				
 
 //Fonction de genration des données (ici un exemple qui genere aléatoirement
-function LoadData() { //# groups,# points per group
-	// recupérerer les dimensions
-	//1ere et 2nd dimension et 3eme  et 4 éme dimension on sauvegarde le nom (servira pour récuperer valeur x et y,pour detemriner la taille, et les groupes de couleurs)
-	//si pas de 3 éme ou 4 éme on a y= undefined
-	
-	// créer les groupe (couleurs) pour la 4éme dimensions
-	//4éme dimension : determiner min et max: faire 3 valeur (<1/4 max ,<1/2 max,<3/4 max)
-	//si pas de 4 éme dimension on fait qu'un goupe
-	//si 4éme dimension:On crée 4 groupe pour la 4 éme dimensions
-	
-	//TODO: Pour chaque produit: 
-	//si on a plusieurs groupe : on récupére la valeur de la 4 éme dimension on la conpore pour saovir dans quel groupe de couleur mettre le point
-	//sinon on le rajoute dans le seul groupe
-	//aprés on indique les coordonnées x et y suivant les valeurs de la 1er et 2 nd dimension
-	//On determine la taille suivant la vlauer de la 3éme dimensin
+function LoadData() { 
 	//array for our dot on chart 
 	var data=[];
 	//params reprents our dimension
@@ -141,14 +115,23 @@ function LoadData() { //# groups,# points per group
 		//Define groups (for fourth dimension (color)): each groupe has got one color
 		//Determine max for dimColor feature
 		var max;
+		var min;
 		//for each product we get his list of features
 		$.each(json, function(i, product) {
 			if (i != "FILTERS" && i !="DIMENSIONS"){
 				var value = parseFloat(product[dimColor],10);
 				//we search value for feature == name (feature for filter)
+			    //check if it's first time we search min value
+				if(typeof min === 'undefined'){
+					min=value;
+				}
 				//check if it's first time we search max value
 				if(typeof max === 'undefined'){
 					max=value;
+				}
+				//check if his value < min
+				if(value < min){
+					min=value;
 				}
 				//check if his value > max
 				if(value > max){
@@ -156,76 +139,64 @@ function LoadData() { //# groups,# points per group
 				}
 			}
 		});
+		//calcul difference
+		var ecart= max-min;
 		//Determine limit for each group/color
-		dimColorLow= max/4;
-		dimColorMed= max/2;
-		dimColorHigh= max*3/4;
+		dimColorLow= min+(ecart/4);
+		dimColorMed= min+(ecart/2);
+		dimColorHigh= min+(ecart*3/4);
 		//Create four group in data
 		for (i = 0; i < 4; i++) {
+			//var to show value of each group
+			var limit;
+			if (i==0){
+				limit="<"+dimColorLow;
+			}else if (i==1){
+				limit="<"+dimColorMed;
+			}else if (i==2){
+				limit="<"+dimColorHigh;
+			}else if (i==3){
+				limit=">"+dimColorHigh;
+			}
 			data.push({
-				key: 'Group ' + i,
+				key: dimColor + limit,
 				values: []
 			});
 		}
 	}else{
 	//No 4th dimension: just one color,one group
 	data.push({
-		key: 'Group1',
+		key: 'Produit',
 			values: []
 		});
 	}
+	console.log(data);
 	
 	/*Add to data each product*/
 	$.each(json, function(name, product) {
 		if (name != "FILTERS" && name !="DIMENSIONS"){
 			//If dimension 4 exist compare value to know the group where the dot will add
-			/*data[i].values.push({
-			x: random(),
-			y: random(),
-			size: Math.round(Math.random() * 100) / 100,
-			shape: shapes[j % shapes.length]
-			});*/
-		}
-	}
-	return data;
-	
-	
-	//smiley and thin-x are our custom symbols!
-	/*var data = [],
-	shapes = ['thin-x', 'circle', 'cross', 'triangle-up', 'triangle-down', 'diamond', 'square'],
-	random = d3.random.normal();
-	for (i = 0; i < groups; i++) {
-		data.push({
-			key: 'Group ' + i,
-			values: []
-		});
-		for (j = 0; j < points; j++) {
-			data[i].values.push({
-			x: random(),
-			y: random(),
-			size: Math.round(Math.random() * 100) / 100,
-			shape: shapes[j % shapes.length]
+			var group=0;
+			if (typeof dimColor !== 'undefined'){
+				var val= parseFloat(product[dimColor],10);
+				if(val>dimColorLow && val<dimColorMed){
+					group=1;
+				}else if(val>dimColorMed && val<dimColorHigh){
+					group=2;
+				}else if(val>dimColorHigh){
+					group=3;
+				}
+			}
+			data[group].values.push({
+				x: parseFloat(product[dimX],10), //set x position with value for first dimension
+				y: parseFloat(product[dimY],10), //set y position with value for second dimension
+				size: Math.round(parseFloat(product[dimSize],10)*100) / 100 //set size with value for third dimension
 			});
 		}
-	}
-	return data;*/
+	});
+	console.log(data);
+	return data;
 }
-
-function browseJson(){
-	console.log(json);
-	// parcourir le premier tableau Json pour recuperer les cle et les objets B associe
-	for(var value in json){
-	//parcourir l objet B pour recupere les cle et les valeur qui sont dans B
-	json2  = json[value];
-	// Pour chaque gRand objet on affiche les petits objets cle/valeur	    
-	for(var key in json2){
-		if(value != "FILTERS"){
-            console.log(value + " "+key +" -> "+ json2[key]);
-        }
-    }
-    }
-}
-
 
 //Function for generation of all filters
 function GenerateFilter(json){
@@ -246,7 +217,7 @@ function GenerateFilter(json){
 		if (type=="BooleanValue"){
 			contentsCheckbox+="<p class='list-group-item-text' >"
              +"<div class='checkbox checkbox-primary'>"
-             +"<label><input type='checkbox' name=chbx"+name+" value='chbx"+name+"'>"+name+"</label>"
+             +"<label><input type='checkbox' name='chbx"+name+"' value='chbx"+name+"'>"+name+"</label>"
              +"</div>";
 		}else if (type=="IntegerValue" || type=="RealValue"){
 			//Search the max and min value for this filter
@@ -275,7 +246,9 @@ function GenerateFilter(json){
 					}
 				}
 			});
-			contentsNumber+="<p>"+name+".Type: "+type+",min: "+min+",max: "+max+"</p>";
+			//determine value change when moving object
+			var datasliderstep=(max-min)/50;
+			contentsNumber+="<div class='page-header'><p class='list-group-item-heading'>"+name+"</p></div><b>"+min+"</b><input id='inter"+name+"' type='text' class='span2' data-value="+min+","+max+" value="+min+","+max+" data-slider-min='"+min+"' data-slider-max='"+max+"' data-slider-step='"+datasliderstep+"' data-slider-value='["+min+","+max+"]'/> <b>"+max+"</b>";
 		}else if (type=="StringValue"){
 			//Create header of this list
 			contentsString+="<div class='page-header'>"
@@ -296,7 +269,7 @@ function GenerateFilter(json){
 			//Now we complete html with the list
 			contentsString+="<p class='list-group-item-text' >"
 					+"<div class='checkbox checkbox-primary'>"
-					+"<label><input type='checkbox' name=chbx"+name+""+value+" value='chbx"+name+""+value+"'>"+value+"</label>"
+					+"<label><input type='checkbox' name='chbx"+name+""+value+"' value='chbx"+name+""+value+"'>"+value+"</label>"
 					+"</div>";
 			});
 		}
@@ -304,32 +277,6 @@ function GenerateFilter(json){
 	//Ajout du contenu html crée
 	contents=contentsCheckbox+contentsNumber+contentsString;
 	filter.innerHTML=contents;
-	
-	/*On va rajouter dans content le hmtl de chaque type de filtre (syntaxe basé sur le confiugurator.html)
-	//Search
-	//TODO condition pour savoir si on a à rajouter une barre de recherche
-	contents+="<div class='page-header'>"
-			  +"<div class='least-content'>Recherche</div>"
-			  +"</div>"
-			  +"<div class='row-content'>"
-              +"<p class='list-group-item-text'>Product: <input class='form-control floating-label' type='text' placeholder='Find' ng-model='productFilter'></p>"
-			  +"<button class='btn btn-primary' type='button'>Rechercher</button>"
-			  +"</div>"
-			  +"<div class='list-group-separator'></div>"
-	//Checkbox
-	//TODO for dans le json pour voir si on des filtres de type checkbox
-	contents+="<div class='page-header'>"
-			 +"<p class='list-group-item-heading'>Caractéristiques</p>"
-			 +"</div>"
-             +"<p class='list-group-item-text' >"
-             +"<div class='checkbox checkbox-primary'>"
-             +"<label><input type='checkbox' name='critere1' value='1'> Caractéristiques</label>"
-             +"</div>"
-			 
-	//Barre d'intervalle
-	//TODO for dans le json pour voir si on des filtres de type barre d'intervalle
-	
-	//TODO ajouter d'autres types de filtres
-	//Ajout du contenu html crée
-	filter.innerHTML=contents; */
+	//Création de l'objet Slider With JQuery
+	$(".span2").slider({});
 }
