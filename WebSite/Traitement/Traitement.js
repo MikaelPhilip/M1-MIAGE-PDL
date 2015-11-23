@@ -70,7 +70,7 @@ function Generate(json){
 		//add chart in html
 		d3.select('#graph svg')
 		//add data, product on chart
-		.datum(LoadData()) //Méthode temporaire
+		.datum(LoadData(chart)) //Méthode temporaire
 		//chart generation
 		.call(chart);
 		nv.utils.windowResize(chart.update);
@@ -80,7 +80,7 @@ function Generate(json){
 }				
 
 //Fonction de genration des données (ici un exemple qui genere aléatoirement
-function LoadData() { 
+function LoadData(chart) { 
 	//array for our dot on chart 
 	var data=[];
 	//params reprents our dimension
@@ -109,6 +109,18 @@ function LoadData() {
 	if ((typeof dimX === 'undefined')||(typeof dimY === 'undefined')){
 		alert("Erreur le json ne défini pas deux premieres dimensions");
 	}	
+	//Add label for x and y 
+	chart.xAxis.axisLabel(dimX+" Taille des points:"+dimSize);
+	//Add label for x and y 
+	chart.yAxis.axisLabel(dimY);
+    //Modify tooltips
+	chart.tooltip.contentGenerator(function(data){
+		//Set the content of tooltip
+		var text="Nom Produit: "+data.point.label+"\n"+dimX+":"+data.point.x+"\n"+dimY+":"+data.point.y+"\n"+dimSize+":"+data.point.size
+		return text;
+	});
+	
+	
 	/*Create group of color for fourth dimension*/
 	//If 4th dimension exist
 	if (typeof dimColor !== 'undefined'){
@@ -190,7 +202,8 @@ function LoadData() {
 			data[group].values.push({
 				x: parseFloat(product[dimX],10), //set x position with value for first dimension
 				y: parseFloat(product[dimY],10), //set y position with value for second dimension
-				size: Math.round(parseFloat(product[dimSize],10)*100) / 100 //set size with value for third dimension
+				size: parseFloat(product[dimSize],10), //set size with value for third dimension
+				label: name //add an object to sotck name of product
 			});
 		}
 	});
@@ -217,7 +230,7 @@ function GenerateFilter(json){
 		if (type=="BooleanValue"){
 			contentsCheckbox+="<p class='list-group-item-text' >"
              +"<div class='checkbox checkbox-primary'>"
-             +"<label><input type='checkbox' name='chbx"+name+"' value='chbx"+name+"'>"+name+"</label>"
+             +"<label><input type='checkbox' ' name='chbx"+name+"' value='chbx"+name+"'>"+name+"</label>"
              +"</div>";
 		}else if (type=="IntegerValue" || type=="RealValue"){
 			//Search the max and min value for this filter
