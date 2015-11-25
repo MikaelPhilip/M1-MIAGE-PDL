@@ -57,8 +57,8 @@ function Generate(json){
 		chart = nv.models.scatterChart()
 		.showDistX(true)
 		.showDistY(true)
-		//.useVoronoi(true)
-		.color(["rgb(0,255,0)","rgb(255,0,0)"])
+		.useVoronoi(true)
+		.color(d3.scale.category10().range())
 		.duration(300)
 		;
 		chart.dispatch.on('renderEnd', function(){
@@ -68,19 +68,14 @@ function Generate(json){
 		chart.yAxis.tickFormat(d3.format('.02f'));
 		//call méthode for generate data and personalize axis,tooltips
 		var data=LoadData(chart);
+		//manage color or picture for each dot (in data, product,chart)
+		personalizeDots(chart,data);
 		//add chart in html
 		d3.select('#graph svg')
 		//add data, product on chart
 		.datum(data)
 		//chart generation
 		.call(chart);
-		//manage color or picture for each dot (in data, product,chart)
-		//TODO: récuperer la liste des points dans le chart et modifier la coleur ou le contenu
-		console.log(chart);
-		$.each(data[0].values,function(index,value){
-			//Cas image = undefined , on appelle méthode pour regler couleur suivant valeur dimColorValue sinon on change le contenue du point avec l'image
-			console.log(value);
-		});
 		nv.utils.windowResize(chart.update);
 		chart.dispatch.on('stateChange', function(e) { ('New State:', JSON.stringify(e)); });
 		return chart;
@@ -126,7 +121,6 @@ function LoadData(chart) {
     //Modify tooltips
 	chart.tooltip.contentGenerator(function(data){
 		//Set the content of tooltip
-		//console.log(data);
 		var text="<p><b>Nom Produit: "+data.point.label+"</b></p>"
 		+"<p>"+dimX+":"+data.point.x+"</p>"
 		+"<p>"+dimY+":"+data.point.y+"</p>";
@@ -138,7 +132,6 @@ function LoadData(chart) {
 		}
 		return text;
 	});
-	
 	
 	/*Create group of color for fourth dimension*/
 	//If 4th dimension exist
@@ -315,6 +308,25 @@ function GenerateFilter(json){
 	$(".span2").slider({});
 }
 
+//Function for manage picture for each dot (in data, product,chart)
+function personalizeDots(chart,data){
+	//change color of dots TODO: faire en sorte que la couleur = point.data.couleur
+	//Recherche pour cela d3 linear color scale
+	//TODO: 
+	//1)Faire un groupe pour un point (dans generation)
+	//2)Definir couleur de ce groupe en récupérant code couleur dans data[i].value[0].couleur 
+	//3)Code couleur géneré avec méthode SetColor(value)
+	//4)Créer un array de taille nbPoint qui contient le code couleur et le fournir dans cette méthode:
+	chart.color(["rgb(0,255,0)","rgb(255,0,0)"]); //OK
+	
+	//TODO: gestion image
+	//Cas image = undefined , on appelle méthode pour regler couleur suivant valeur dimColorValue sinon on change le contenue du point avec l'image
+}
+
+//Function for define color
+function SetColor(value){
+	//TODO suivantu ne valeur renvoyer une couleur
+}
 //Function that display the product's image
 function DisplayImg(urlImg){
 	//Préconditions : 
@@ -323,9 +335,9 @@ function DisplayImg(urlImg){
 	// ********************
 	//On va ensuite créer un element que l'on ajoutera dans cette partie
 	//Variables qui contiendra tout le code html de l'image
-	var contentsImg="<div>			<img src = 'http://";//ajout de http:// car bug lors de l'ajout d'URL dans Open compare (issue créé)
+	var contentsImg="<div>			<img src = '";
 	contentsImg+=urlImg;
-	//contentsImg+="www.nobelcar.fr/public/img/big/lamborghini-aventador-9-1024x680.jpg" 
+	//contentsImg+="http://www.nobelcar.fr/public/img/big/lamborghini-aventador-9-1024x680.jpg" 
 	contentsImg+="'class = 'img-circle'><div>";
 	//return(contentsImg);
 	document.getElementById('pictures').innerHTML=contentsImg;
