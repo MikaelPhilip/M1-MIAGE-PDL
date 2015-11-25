@@ -121,7 +121,6 @@ function LoadData(chart) {
     //Modify tooltips
 	chart.tooltip.contentGenerator(function(data){
 		//Set the content of tooltip
-		console.log(data);
 		var text="<p><b>Nom Produit: "+data.point.label+"</b></p>"
 		+"<p>"+dimX+":"+data.point.x+"</p>"
 		+"<p>"+dimY+":"+data.point.y+"</p>";
@@ -213,6 +212,12 @@ function LoadData(chart) {
 					group=3;
 				}
 			}*/
+			
+			//check  4th dimension
+			var col = undefined;
+			if (typeof dimColor !== 'undefined'){
+				col= product[dimColor];
+			}
 			data.push({
 				key: name,
 				values: []
@@ -224,9 +229,9 @@ function LoadData(chart) {
 				label: name, //add an object to stock name of product
 				//Add variable for contains url of picture.Undefined if url undefined or invaled
 				image: undefined, //TODO: Call dans le json le parametre  url images
-				dimColorValue: product[dimColor]
+				dimColorValue: setColor(col)
 			});
-			//group++; //Attention bug d'affichage
+			group++; //Attention bug d'affichage
 		}
 	});
 	
@@ -318,22 +323,35 @@ function GenerateFilter(json){
 
 //Function for manage picture for each dot (in data, product,chart)
 function personalizeDots(chart,data){
-	//change color of dots TODO: faire en sorte que la couleur = point.data.couleur
 	//Recherche pour cela d3 linear color scale
 	//TODO: 
-	//1)Faire un groupe pour un point (dans generation)
-	//2)Definir couleur de ce groupe en récupérant code couleur dans data[i].value[0].couleur 
-	//3)Code couleur géneré avec méthode SetColor(value)
-	//4)Créer un array de taille nbPoint qui contient le code couleur et le fournir dans cette méthode:
-	chart.color(["rgb(0,255,0)","rgb(255,0,0)"]); //OK
+	//1)Faire un groupe pour un point (dans generation) OK
+	//2)Definir couleur de ce groupe en récupérant code couleur dans data[i].value[0].couleur  OK
+	//3)Code couleur géneré avec méthode SetColor(value) TODO
+	//4)Créer un array de taille nbPoint qui contient le code couleur et le fournir dans cette méthode OK
 	
-	//TODO: gestion image
-	//Cas image = undefined , on appelle méthode pour regler couleur suivant valeur dimColorValue sinon on change le contenue du point avec l'image
+	//Change color of dots or change to picture
+	//array for set color for each dot
+	var colors=[]
+	$.each(data,function(index,value){
+		//TODO: gestion image
+		//Cas image = undefined , on appelle méthode pour regler couleur suivant valeur dimColorValue sinon on change le contenue du point avec l'image
+		//get color value
+		colors.push(data[index].values[0].dimColorValue);
+	});
+	chart.color(colors);
 }
 
 //Function for define color
-function SetColor(value){
-	//TODO suivantu ne valeur renvoyer une couleur
+function setColor(value){
+	var color;
+	if(typeof value !== 'undefined'){
+		//TODO: determiner couleur suivant la valeur
+		color="rgb(21,169,61)";
+	}else{
+		color="rgb(21,120,169)";
+	}
+	return color;
 }
 //Function that display the product's image
 function DisplayImg(urlImg){
