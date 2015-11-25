@@ -2,6 +2,7 @@ package test.junit;
 
 import java.io.IOException;
 
+import main.generationJSON_impl.Generation;
 import main.traitement_Impl.Traitement;
 
 import org.junit.*;
@@ -13,6 +14,7 @@ import org.junit.Test;
 public class TestJava {
 
 	public Traitement traitement;
+	public Generation generation;
 	/**
 	 * @throws java.lang.Exception
 	 * Méthode d'initialisation
@@ -21,6 +23,8 @@ public class TestJava {
 	public void setUp() throws Exception {
 		//Créer un objet traitement
 		traitement = new Traitement();
+		generation = new Generation();
+		
 	}
 	
 	/**
@@ -33,6 +37,16 @@ public class TestJava {
 		assertNotNull(traitement.getPcm());
 	}
 	
+	@Test
+	public void testCompareJsonPcm1() throws IOException{
+		traitement.pcmLoad("pcms/example.pcm");
+		//assertTrue(generation.verifJSONgenere("pcms/example.pcm", traitement.pc));
+	}
+	@Test
+	public void testCompareJsonPcm2() throws IOException{
+		traitement.pcmLoad("pcms/testGenereJSON.pcm");
+		assertNotNull(traitement.getPcm());
+	}
 	/**
 	 * Méthode de chargement pcm : cas fichier inexistant
 	 * @throws IOException 

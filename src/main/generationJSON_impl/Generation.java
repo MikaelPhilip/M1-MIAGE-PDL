@@ -52,9 +52,8 @@ public class Generation implements GenerationInter {
 
 			for (Cell cell : product.getCells()) {
 				jsonCell.put(cell.getFeature().getName(), cell.getContent());
-
+				
 				if (filters) {
-
 					// récuperer le type de Feature
 					str_type_filter = cell.getInterpretation() + "";
 					str_type_filter = str_type_filter.split("@")[0];
@@ -91,6 +90,9 @@ public class Generation implements GenerationInter {
 		choixDimension(json.getJSONObject("FILTERS"));
 
 		this.afficherJSON(json);
+if(verifJSONgenere(filepath,pcm)){
+			
+		}
 
 	}
 
@@ -308,7 +310,7 @@ public class Generation implements GenerationInter {
 	
 	public boolean verifJSONgenere(String pathJSONgenere , PCM pcm){
 		
-		
+		System.out.println("je suis verif json ");
 		
 		
 		org.json.simple.JSONObject jsonGenere = lire.lireJSONgenere(pathJSONgenere);
@@ -317,17 +319,46 @@ public class Generation implements GenerationInter {
 		for (Product product : pcm.getProducts()) {
 			
 			
+			if(jsonGenere.get(product.getName())!=null){
+				
+				for (Cell cell : product.getCells()) {
+						
+					
+					org.json.simple.JSONObject jsonGene = (org.json.simple.JSONObject) jsonGenere.get(product.getName());
+					if(jsonGene.get(cell.getFeature().getName())!=null){
+						
+						if(cell.getContent().equals(jsonGene.get(cell.getFeature().getName()))){
+							
+							System.out.println("ok");
+							
+					}else{
+						
+						System.out.println("not ok");
+						
+					}
+						
+						
+						
+					}else{
+						System.out.println("not ok");
+
+					}
+					
+			}
 			
 			
+		}else{
 			
+			System.out.println("not ok");
+
+		}
+		
 		}
 		
 		
-		
-		
 		return false;
+	
 	}
-
 	public boolean isJSONValid(JSONObject json) throws JSONException {
 		try {
 			
