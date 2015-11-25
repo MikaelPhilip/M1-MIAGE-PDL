@@ -293,3 +293,18 @@ function GenerateFilter(json){
 	//Création de l'objet Slider With JQuery
 	$(".span2").slider({});
 }
+
+//Function that display the product's image
+function DisplayImg(urlImg){
+	//Préconditions : 
+	//Existance d'une URL
+	//L'URL est valide
+	// ********************
+	//On va ensuite créer un element que l'on ajoutera dans cette partie
+	//Variables qui contiendra tout le code html de l'image
+	var contentsImg="<div>			<img src = ";
+	contentsImg+=urlImg;
+	//contentsImg+="http://www.nobelcar.fr/public/img/big/lamborghini-aventador-9-1024x680.jpg" 
+	contentsImg+="class = "img-circle"><div>";
+	return(contentsImg);
+}
