@@ -121,6 +121,7 @@ function LoadData(chart) {
     //Modify tooltips
 	chart.tooltip.contentGenerator(function(data){
 		//Set the content of tooltip
+		console.log(data);
 		var text="<p><b>Nom Produit: "+data.point.label+"</b></p>"
 		+"<p>"+dimX+":"+data.point.x+"</p>"
 		+"<p>"+dimY+":"+data.point.y+"</p>";
@@ -190,17 +191,18 @@ function LoadData(chart) {
 	}else{*/
 	//No 4th dimension: just one color,one group
 	/*Create group of data*/
-	data.push({
+	/*data.push({
 		key: 'Produit',
 			values: []
-		});
+		});*/
 	//}
 	
 	/*Add to data each product*/
+	var group=0;
 	$.each(json, function(name, product) {
 		if (name != "FILTERS" && name !="DIMENSIONS"){
 			//If dimension 4 exist compare value to know the group where the dot will add
-			var group=0;
+			
 			/*if (typeof dimColor !== 'undefined'){
 				var val= parseFloat(product[dimColor],10);
 				if(val>dimColorLow && val<dimColorMed){
@@ -211,6 +213,10 @@ function LoadData(chart) {
 					group=3;
 				}
 			}*/
+			data.push({
+				key: name,
+				values: []
+			});
 			data[group].values.push({
 				x: parseFloat(product[dimX],10), //set x position with value for first dimension
 				y: parseFloat(product[dimY],10), //set y position with value for second dimension
@@ -220,8 +226,10 @@ function LoadData(chart) {
 				image: undefined, //TODO: Call dans le json le parametre  url images
 				dimColorValue: product[dimColor]
 			});
+			//group++; //Attention bug d'affichage
 		}
 	});
+	
 	return data;
 }
 
