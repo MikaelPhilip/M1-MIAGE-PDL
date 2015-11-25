@@ -323,9 +323,9 @@ function DisplayImg(urlImg){
 	// ********************
 	//On va ensuite créer un element que l'on ajoutera dans cette partie
 	//Variables qui contiendra tout le code html de l'image
-	var contentsImg="<div>			<img src = '";
+	var contentsImg="<div>			<img src = 'http://";//ajout de http:// car bug lors de l'ajout d'URL dans Open compare (issue créé)
 	contentsImg+=urlImg;
-	//contentsImg+="http://www.nobelcar.fr/public/img/big/lamborghini-aventador-9-1024x680.jpg" 
+	//contentsImg+="www.nobelcar.fr/public/img/big/lamborghini-aventador-9-1024x680.jpg" 
 	contentsImg+="'class = 'img-circle'><div>";
 	//return(contentsImg);
 	document.getElementById('pictures').innerHTML=contentsImg;
