@@ -12,15 +12,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.json.JSONException;
-
 import org.opencompare.api.java.Cell;
 import org.opencompare.api.java.PCM;
 import org.opencompare.api.java.Product;
 import org.json.JSONObject;
-
-
 import main.generationJSON.GenerationInter;
 
 public class Generation implements GenerationInter {
@@ -29,7 +25,8 @@ public class Generation implements GenerationInter {
 
 	JSONObject jsonDimension;
 	String filepath;
-
+	LireJSONParametres lire;
+	
 
 	@Override
 	public void generateJSON(PCM pcm) {
@@ -139,20 +136,27 @@ public class Generation implements GenerationInter {
 
 		// The name of the file to open.
 		String fileName = "./testParameters/parametreDimension.txt";
-
+		
 		// This will reference one line at a time
 		String dimension = null;
 
-		try {
+		//try {
+			
+		
 			// FileReader reads text files in the default encoding.
-			FileReader fileReader = new FileReader(fileName);
-
-			// Always wrap FileReader in BufferedReader.
-			BufferedReader bufferedReader = new BufferedReader(fileReader);
-			System.out.println(bufferedReader.lines().toString());
+//			FileReader fileReader = new FileReader(fileName);
+//
+//			// Always wrap FileReader in BufferedReader.
+//			BufferedReader bufferedReader = new BufferedReader(fileReader);
+//			System.out.println(bufferedReader.lines().toString());
 			System.out.println("jsonDimension = " + dimensionsJSON.length());
-
-			switch (dimensionsJSON.length()) {
+			lire = new LireJSONParametres();
+			
+			org.json.simple.JSONObject jsonParametre = lire.lireJSONParametres();
+				switch (jsonParametre.size()) {
+			
+			case 1:
+				System.out.println("la taille de jsonDimension = " + dimensionsJSON.length()  +" impossible de faire choix les dimensions");
 
 			case 2:
 				limitDim = 2;
@@ -165,8 +169,21 @@ public class Generation implements GenerationInter {
 
 			}
 
-			while ((dimension = bufferedReader.readLine()) != null) {
-
+			
+			
+			
+			
+			for(int t = 1; t <= jsonParametre.size(); t++)
+			{
+//			      Object objects = jsonObject.get(i);
+		      //System.out.println( "je suis ds generation "+ jsonParametre.get(t+""));
+			      //Iterate through the elements of the array i.
+			      //Get thier value.
+			      //Get the value for the first element and the value for the last element.
+			
+		      dimension = jsonParametre.get(t+"")+"";
+		      
+		      
 				System.out.println(dimension);
 				if (i <= limitDim) {
 					dim = dimension;
@@ -197,14 +214,14 @@ public class Generation implements GenerationInter {
 			}
 
 			// Always close files.
-			bufferedReader.close();
-		} catch (FileNotFoundException ex) {
-			System.out.println("Unable to open file '" + fileName + "'");
-		} catch (IOException ex) {
-			System.out.println("Error reading file '" + fileName + "'");
-			// Or we could just do this:
-			// ex.printStackTrace();
-		}
+			//bufferedReader.close();
+//		} catch (FileNotFoundException ex) {
+//			System.out.println("Unable to open file '" + fileName + "'");
+//		} catch (IOException ex) {
+//			System.out.println("Error reading file '" + fileName + "'");
+//			// Or we could just do this:
+//			// ex.printStackTrace();
+//		}
 		System.out.println("jsonDimension = " + jsonDimension);
 
 		// Lire les choix des dimensions
@@ -245,6 +262,8 @@ public class Generation implements GenerationInter {
 		System.out.println("JSON Object: " + json);
 		if (isJSONValid(json)) {
 			try {
+				
+				
 				filepath = "./json/generation.json";
 
 				File file = new File(filepath);
@@ -269,6 +288,8 @@ public class Generation implements GenerationInter {
 			JSONObject s = (JSONObject) json.get("FILTERS");
 			// System.out.println("cle=" + cle + ", valeur=" + val);
 
+			
+			
 		}
 
 		// TODO Verifier si la PCM a au moins deux caractéristiques numériques
@@ -284,9 +305,36 @@ public class Generation implements GenerationInter {
 		 */
 
 	}
+	
+	public boolean verifJSONgenere(String pathJSONgenere , PCM pcm){
+		
+		
+		
+		
+		org.json.simple.JSONObject jsonGenere = lire.lireJSONgenere(pathJSONgenere);
+
+		
+		for (Product product : pcm.getProducts()) {
+			
+			
+			
+			
+			
+		}
+		
+		
+		
+		
+		return false;
+	}
 
 	public boolean isJSONValid(JSONObject json) throws JSONException {
 		try {
+			
+			
+			
+			
+			
 			
 			
 		} catch (JSONException ex) {
