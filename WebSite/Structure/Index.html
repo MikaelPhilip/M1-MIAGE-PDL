@@ -6,6 +6,7 @@
   <!--Base CSS-->
   <link rel="stylesheet" href="Bootstrap/css/bootstrap.css">
   <link rel="stylesheet" href="Bootstrap/css/slider.css">
+
   <!--Import pour le graphique-->
   <script type="text/javascript" src="../Librairies/d3/d3.js"></script>
   <script type="text/javascript" src="../Librairies/d3/nv.d3.js"></script>
@@ -17,7 +18,7 @@
   <script type="text/javascript" src="../Traitement/traitement.js"></script>
 </head>
 
-<body onload="traitement()">
+<body onload="traitement(),DisplayImg('http://www.nobelcar.fr/public/img/big/lamborghini-aventador-9-1024x680.jpg')">
 	<header class="page-header">
 		<div id="container">
 			<h1>Product chart</h1>
@@ -26,6 +27,16 @@
 	</header>
 	<!--Form  to allow to allow send send json files-->
 	<div id="container" class="row">
+		<div id="Load" class="col-sm-10">
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3>test image</h3>
+				</div>
+			<div class="panel-body">
+				<div id="pictures"/>
+			</div>
+		</div>
+		
 		<!--<div id="Load" class="col-sm-10">
 			<div class="panel panel-primary">
 				<div class="panel-heading">

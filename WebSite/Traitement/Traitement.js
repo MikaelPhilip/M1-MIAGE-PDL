@@ -57,8 +57,8 @@ function Generate(json){
 		chart = nv.models.scatterChart()
 		.showDistX(true)
 		.showDistY(true)
-		.useVoronoi(true)
-		.color(d3.scale.category10().range())
+		//.useVoronoi(true)
+		.color(["rgb(0,255,0)","rgb(255,0,0)"])
 		.duration(300)
 		;
 		chart.dispatch.on('renderEnd', function(){
@@ -66,13 +66,21 @@ function Generate(json){
 		});
 		chart.xAxis.tickFormat(d3.format('.02f'));
 		chart.yAxis.tickFormat(d3.format('.02f'));
-		
+		//call méthode for generate data and personalize axis,tooltips
+		var data=LoadData(chart);
 		//add chart in html
 		d3.select('#graph svg')
 		//add data, product on chart
-		.datum(LoadData(chart)) //Méthode temporaire
+		.datum(data)
 		//chart generation
 		.call(chart);
+		//manage color or picture for each dot (in data, product,chart)
+		//TODO: récuperer la liste des points dans le chart et modifier la coleur ou le contenu
+		console.log(chart);
+		$.each(data[0].values,function(index,value){
+			//Cas image = undefined , on appelle méthode pour regler couleur suivant valeur dimColorValue sinon on change le contenue du point avec l'image
+			console.log(value);
+		});
 		nv.utils.windowResize(chart.update);
 		chart.dispatch.on('stateChange', function(e) { ('New State:', JSON.stringify(e)); });
 		return chart;
@@ -109,6 +117,8 @@ function LoadData(chart) {
 	if ((typeof dimX === 'undefined')||(typeof dimY === 'undefined')){
 		alert("Erreur le json ne défini pas deux premieres dimensions");
 	}	
+	
+	/*Parametize labels and tooltips*/
 	//Add label for x and y 
 	chart.xAxis.axisLabel(dimX+" Taille des points:"+dimSize);
 	//Add label for x and y 
@@ -116,14 +126,23 @@ function LoadData(chart) {
     //Modify tooltips
 	chart.tooltip.contentGenerator(function(data){
 		//Set the content of tooltip
-		var text="Nom Produit: "+data.point.label+"\n"+dimX+":"+data.point.x+"\n"+dimY+":"+data.point.y+"\n"+dimSize+":"+data.point.size
+		//console.log(data);
+		var text="<p><b>Nom Produit: "+data.point.label+"</b></p>"
+		+"<p>"+dimX+":"+data.point.x+"</p>"
+		+"<p>"+dimY+":"+data.point.y+"</p>";
+		if(typeof dimSize !== 'undefined'){
+			text+="<p>"+dimSize+":"+data.point.size+"</p>";
+		}
+		if(typeof dimColor !== 'undefined'){
+			text+="<p>"+dimColor+":"+data.point.dimColorValue+"</p>";
+		}
 		return text;
 	});
 	
 	
 	/*Create group of color for fourth dimension*/
 	//If 4th dimension exist
-	if (typeof dimColor !== 'undefined'){
+	/*if (typeof dimColor !== 'undefined'){
 		//Define groups (for fourth dimension (color)): each groupe has got one color
 		//Determine max for dimColor feature
 		var max;
@@ -175,21 +194,21 @@ function LoadData(chart) {
 				values: []
 			});
 		}
-	}else{
+	}else{*/
 	//No 4th dimension: just one color,one group
+	/*Create group of data*/
 	data.push({
 		key: 'Produit',
 			values: []
 		});
-	}
-	console.log(data);
+	//}
 	
 	/*Add to data each product*/
 	$.each(json, function(name, product) {
 		if (name != "FILTERS" && name !="DIMENSIONS"){
 			//If dimension 4 exist compare value to know the group where the dot will add
 			var group=0;
-			if (typeof dimColor !== 'undefined'){
+			/*if (typeof dimColor !== 'undefined'){
 				var val= parseFloat(product[dimColor],10);
 				if(val>dimColorLow && val<dimColorMed){
 					group=1;
@@ -198,16 +217,18 @@ function LoadData(chart) {
 				}else if(val>dimColorHigh){
 					group=3;
 				}
-			}
+			}*/
 			data[group].values.push({
 				x: parseFloat(product[dimX],10), //set x position with value for first dimension
 				y: parseFloat(product[dimY],10), //set y position with value for second dimension
 				size: parseFloat(product[dimSize],10), //set size with value for third dimension
-				label: name //add an object to sotck name of product
+				label: name, //add an object to stock name of product
+				//Add variable for contains url of picture.Undefined if url undefined or invaled
+				image: undefined, //TODO: Call dans le json le parametre  url images
+				dimColorValue: product[dimColor]
 			});
 		}
 	});
-	console.log(data);
 	return data;
 }
 
@@ -306,5 +327,6 @@ function DisplayImg(urlImg){
 	contentsImg+=urlImg;
 	//contentsImg+="http://www.nobelcar.fr/public/img/big/lamborghini-aventador-9-1024x680.jpg" 
 	contentsImg+="'class = 'img-circle'><div>";
-	return(contentsImg);
+	//return(contentsImg);
+	document.getElementById('pictures').innerHTML=contentsImg;
 }
