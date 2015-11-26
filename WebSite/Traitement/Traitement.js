@@ -55,6 +55,7 @@ function Generate(json){
 	nv.addGraph(function() {
 		//Initialisation
 		chart = nv.models.scatterChart()
+		.showLegend(false)
 		.showDistX(true)
 		.showDistY(true)
 		.useVoronoi(true)
@@ -66,17 +67,21 @@ function Generate(json){
 		});
 		chart.xAxis.tickFormat(d3.format('.02f'));
 		chart.yAxis.tickFormat(d3.format('.02f'));
+		chart.yAxis.orient("left").ticks(15);
+		chart.xAxis.orient("bottom").ticks(15);
 		//call méthode for generate data and personalize axis,tooltips
 		var data=LoadData(chart);
 		//manage color or picture for each dot (in data, product,chart)
 		personalizeDots(chart,data);
 		//add chart in html
+		
+		
 		d3.select('#graph svg')
 		//add data, product on chart
 		.datum(data)
 		//chart generation
 		.call(chart);
-		nv.utils.windowResize(chart.update);
+		//nv.utils.windowResize(chart.update);
 		chart.dispatch.on('stateChange', function(e) { ('New State:', JSON.stringify(e)); });
 		return chart;
 	});
@@ -120,6 +125,7 @@ function LoadData(chart) {
 	chart.yAxis.axisLabel(dimY);
     //Modify tooltips
 	chart.tooltip.contentGenerator(function(data){
+		console.log(data);
 		//Set the content of tooltip
 		var text="<p><b>Nom Produit: "+data.point.label+"</b></p>"
 		+"<p>"+dimX+":"+data.point.x+"</p>"
@@ -128,7 +134,7 @@ function LoadData(chart) {
 			text+="<p>"+dimSize+":"+data.point.size+"</p>";
 		}
 		if(typeof dimColor !== 'undefined'){
-			text+="<p>"+dimColor+":"+data.point.dimColorValue+"</p>";
+			text+="<p>"+dimColor+":"+data.point.valcolor+"</p>";
 		}
 		return text;
 	});
@@ -213,9 +219,9 @@ function LoadData(chart) {
 				}
 			}*/
 			
-			//check  4th dimension
 			var col = undefined;
-			if (typeof dimColor !== 'undefined'){
+			//check  4th dimension
+			if(typeof dimColor !== undefined){
 				col= product[dimColor];
 			}
 			data.push({
@@ -229,7 +235,8 @@ function LoadData(chart) {
 				label: name, //add an object to stock name of product
 				//Add variable for contains url of picture.Undefined if url undefined or invaled
 				image: undefined, //TODO: Call dans le json le parametre  url images
-				dimColorValue: setColor(col)
+				valcolor: product[dimColor],
+				dimColorValue: setColor(col,dimColor)
 			});
 			group++; //Attention bug d'affichage
 		}
@@ -343,11 +350,20 @@ function personalizeDots(chart,data){
 }
 
 //Function for define color
-function setColor(value){
+function setColor(valueCol,dimColor){
 	var color;
-	if(typeof value !== 'undefined'){
-		//TODO: determiner couleur suivant la valeur
-		color="rgb(21,169,61)";
+	if(typeof valueCol !== 'undefined'){
+		//Trouver un myen effecise de determiner un %
+		var pourc= 100;
+		var r=21;
+		var g=169;
+		if(pourc<=50){
+			r+=pourc;
+		}
+		if(pourc>50){
+			g=g-pourc;
+		}
+		color="rgb("+r+","+g+",60)";
 	}else{
 		color="rgb(21,120,169)";
 	}
