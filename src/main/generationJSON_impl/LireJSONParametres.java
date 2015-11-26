@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
 
+import org.apache.log4j.Logger;
 import org.json.simple.*;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -13,8 +14,9 @@ import org.json.simple.parser.ParseException;
 public class LireJSONParametres {
   
 
-    	 
-    	 public JSONObject lireJSONParametres(){
+    private static final Logger log = Logger.getLogger(Generation.class);
+
+    	 public JSONObject lireJSONParametres(String pathParametres){
     		 
     		 JSONObject jsonObject = null;
 	JSONParser parser = new JSONParser();
@@ -26,7 +28,7 @@ public class LireJSONParametres {
 		jsonObject = (JSONObject) obj;
 
 		
-		System.out.println("jsonParametres " +jsonObject);
+		log.info("jsonParametres " +jsonObject);
 
 		for(int i = 1; i <= jsonObject.size(); i++)
 		{
@@ -70,7 +72,7 @@ public class LireJSONParametres {
 		jsonObject = (JSONObject) obj;
 
 		
-		System.out.println("jsonParametres " +jsonObject);
+		log.info("lireJSONgenere " +jsonObject);
 
 		for(int i = 1; i <= jsonObject.size(); i++)
 		{

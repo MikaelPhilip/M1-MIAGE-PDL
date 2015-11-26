@@ -1,10 +1,7 @@
 package main.generationJSON_impl;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
@@ -12,16 +9,25 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.opencompare.api.java.Cell;
 import org.opencompare.api.java.PCM;
 import org.opencompare.api.java.Product;
-import org.json.JSONObject;
+
 import main.generationJSON.GenerationInter;
 
 public class Generation implements GenerationInter {
+    private static final Logger logger = Logger.getLogger(Generation.class);
+    
+    
 
-	JSONObject json = new JSONObject();
+
+    
+	JSONObject json = new JSONObject(); 
 
 	JSONObject jsonDimension;
 	String filepath;
@@ -31,20 +37,25 @@ public class Generation implements GenerationInter {
 	@Override
 	public void generateJSON(PCM pcm) {
 		// TODO Auto-generated method stub
-
+	//	logger.setLevel(Level.OFF);
 		Map<String, String> map = new HashMap<String, String>();
 		boolean filters = true;
 		String str_type_filter;
 		String[] str;
+	    
 
+		
+		
+		    
 		// We start by listing the names of the products
-		System.out.println("--- Products ---");
+		
+		  logger.info("--- Products ---");
 
 		JSONObject filterJSON = new JSONObject();
 
 		for (Product product : pcm.getProducts()) {
-			// System.out.println(product.getName());
-			// System.out.println(product.getCells());
+			// logger.info(product.getName());
+			// logger.info(product.getCells());
 
 			// obj.put(product.getName(),map);
 
@@ -90,13 +101,18 @@ public class Generation implements GenerationInter {
 		choixDimension(json.getJSONObject("FILTERS"));
 
 		this.afficherJSON(json);
-if(verifJSONgenere(filepath,pcm)){
+		logger.info(verifJSONgenere("./testJSON/testCompareJsonPcm2.json",pcm));
+		
+				if(verifJSONgenere("./testJSON/testCompareJsonPcm2.json",pcm)){
+						logger.info("True");
+
 			
 		}
 
 	}
 
 	private void vérifDimension(JSONObject jsonFilters) {
+//		logger.setLevel(Level.OFF);
 		// TODO Auto-generated method stub
 		int nbDimension = 0;
 		for (Iterator iterator = jsonFilters.keys(); iterator.hasNext();) {
@@ -107,7 +123,7 @@ if(verifJSONgenere(filepath,pcm)){
 
 				nbDimension++;
 
-				System.out.println("cle=" + cle + ", valeur=" + val);
+				logger.info("cle=" + cle + ", valeur=" + val);
 			}
 
 		}
@@ -115,7 +131,7 @@ if(verifJSONgenere(filepath,pcm)){
 	}
 
 	public void choixDimension(JSONObject dimensionsJSON) {
-		
+//		logger.setLevel(Level.OFF);
 		String dim = "";
 		
 				// Afficher tous les dimensions IntegerValue
@@ -125,40 +141,37 @@ if(verifJSONgenere(filepath,pcm)){
 
 			if (val.equals("RealValue")) {
 
-				System.out.println("cle=" + cle + ", valeur=" + val);
+				
+				logger.info("cle=" + cle + ", valeur=" + val);
 			}
 
 		}
-		System.out.println("cle=" + dimensionsJSON);
+		logger.info("cle=" + dimensionsJSON);
+		
 		jsonDimension = new JSONObject();
 		int i = 1, j = 4;
 		int limitDim;
-		// System.out.println(" S.V.P fait les choix au plus " + j + "
+		// logger.info(" S.V.P fait les choix au plus " + j + "
 		// dimensions -1 pour exit");
 
 		// The name of the file to open.
-		String fileName = "./testParameters/parametreDimension.txt";
+		String pathParametres = "./testParameters/parametreDimension.txt";
 		
 		// This will reference one line at a time
 		String dimension = null;
 
-		//try {
+	
 			
 		
-			// FileReader reads text files in the default encoding.
-//			FileReader fileReader = new FileReader(fileName);
-//
-//			// Always wrap FileReader in BufferedReader.
-//			BufferedReader bufferedReader = new BufferedReader(fileReader);
-//			System.out.println(bufferedReader.lines().toString());
-			System.out.println("jsonDimension = " + dimensionsJSON.length());
+		
+		logger.info("jsonDimension = " + dimensionsJSON.length());
 			lire = new LireJSONParametres();
 			
-			org.json.simple.JSONObject jsonParametre = lire.lireJSONParametres();
+			org.json.simple.JSONObject jsonParametre = lire.lireJSONParametres(pathParametres);
 				switch (jsonParametre.size()) {
 			
 			case 1:
-				System.out.println("la taille de jsonDimension = " + dimensionsJSON.length()  +" impossible de faire choix les dimensions");
+				logger.info("la taille de jsonDimension = " + dimensionsJSON.length()  +" impossible de faire choix les dimensions");
 
 			case 2:
 				limitDim = 2;
@@ -177,22 +190,18 @@ if(verifJSONgenere(filepath,pcm)){
 			
 			for(int t = 1; t <= jsonParametre.size(); t++)
 			{
-//			      Object objects = jsonObject.get(i);
-		      //System.out.println( "je suis ds generation "+ jsonParametre.get(t+""));
-			      //Iterate through the elements of the array i.
-			      //Get thier value.
-			      //Get the value for the first element and the value for the last element.
+			      
 			
 		      dimension = jsonParametre.get(t+"")+"";
 		      
 		      
-				System.out.println(dimension);
+				logger.info(dimension);
 				if (i <= limitDim) {
 					dim = dimension;
 					if (!dim.equals("-1")) {
-						// vérification la dimension choisi n'est pas choidi
+						// vérification la dimension choisi n'est pas choisi
 						if (jsonDimension.has(dim)) {
-							System.out.println(" cette dimension est choisi");
+							logger.info(" cette dimension est choisi");
 
 						}
 
@@ -201,7 +210,7 @@ if(verifJSONgenere(filepath,pcm)){
 							// les
 							// filteres
 
-							System.out.println("ATTENTION : Cette dimension n'existe pas ");
+							logger.info("ATTENTION : Cette dimension n'existe pas ");
 						}
 
 						else {
@@ -215,53 +224,18 @@ if(verifJSONgenere(filepath,pcm)){
 
 			}
 
-			// Always close files.
-			//bufferedReader.close();
-//		} catch (FileNotFoundException ex) {
-//			System.out.println("Unable to open file '" + fileName + "'");
-//		} catch (IOException ex) {
-//			System.out.println("Error reading file '" + fileName + "'");
-//			// Or we could just do this:
-//			// ex.printStackTrace();
-//		}
-		System.out.println("jsonDimension = " + jsonDimension);
 
-		// Lire les choix des dimensions
-		/*
-		 * Scanner scanner = new Scanner(System.in); String dimension =
-		 * scanner.nextLine(); dim = dimension;
-		 * 
-		 * while (i <= 4 ) {
-		 * 
-		 * dim = dimension; if (!dim.equals("-1")) { // vérification la
-		 * dimension choisi n'est pas choidi if (jsonDimension.has(dim)) {
-		 * System.out.println(" cette dimension est choisi");
-		 * 
-		 * }
-		 * 
-		 * else if (!dimensionsJSON.has(dim)) { // vérification la dimension
-		 * choisi est existe dans les // filteres
-		 * 
-		 * System.out.println("ATTENTION : Cette dimension n'existe pas "); }
-		 * 
-		 * else { // ajout la dimension choisi jsonDimension.put(dimension, "" +
-		 * i); j--; i++; } } else { System.out.println("jsonDimension = " +
-		 * jsonDimension);
-		 * 
-		 * System.exit(0); } if (i <= 4) { System.out.println(
-		 * " S.V.P fait les choix au plus " + j + "  dimensions -1 pour exit");
-		 * scanner = new Scanner(System.in); dimension = scanner.nextLine(); dim
-		 * = dimension; }
-		 * 
-		 * }
-		 */
-		// System.out.println("cle=" + cle + ", valeur=" + val);
+		logger.info("jsonDimension = " + jsonDimension);
 
+		
+		
 		json.put("DIMENSIONS", jsonDimension);
 	}
 
 	public void afficherJSON(JSONObject json) {
-		System.out.println("JSON Object: " + json);
+//		logger.setLevel(Level.OFF);
+		
+		logger.info("JSON Object: " + json);
 		if (isJSONValid(json)) {
 			try {
 				
@@ -279,7 +253,7 @@ if(verifJSONgenere(filepath,pcm)){
 				e.printStackTrace();
 			}
 		} else {
-			System.out.println("error JSON Object: ");
+			logger.info("error JSON Object: ");
 		}
 		
 		
@@ -288,7 +262,7 @@ if(verifJSONgenere(filepath,pcm)){
 			Object cle = iterator.next();
 			Object val = json.get(String.valueOf(cle));
 			JSONObject s = (JSONObject) json.get("FILTERS");
-			// System.out.println("cle=" + cle + ", valeur=" + val);
+			// logger.info("cle=" + cle + ", valeur=" + val);
 
 			
 			
@@ -299,9 +273,9 @@ if(verifJSONgenere(filepath,pcm)){
 		 * int nbFeature=0; for (Feature feature : pcm.getConcreteFeatures()){
 		 * //if the feature has an integer type if(feature){ nbFeature++;
 		 * 
-		 * } //System.out.println(feature.getName()+ nbFeature); } //Test if
+		 * } //logger.info(feature.getName()+ nbFeature); } //Test if
 		 * there is at least 2 features which has an integer type if
-		 * (nbFeature<2){ System.out.println(
+		 * (nbFeature<2){ logger.info(
 		 * "La PCM a moins de 2 caractéristiques numériques."); //End of
 		 * Programm System.exit(0); }
 		 */
@@ -309,8 +283,8 @@ if(verifJSONgenere(filepath,pcm)){
 	}
 	
 	public boolean verifJSONgenere(String pathJSONgenere , PCM pcm){
-		
-		System.out.println("je suis verif json ");
+//		logger.setLevel(Level.OFF);
+		logger.info("je suis verif json ");
 		
 		
 		org.json.simple.JSONObject jsonGenere = lire.lireJSONgenere(pathJSONgenere);
@@ -329,19 +303,17 @@ if(verifJSONgenere(filepath,pcm)){
 						
 						if(cell.getContent().equals(jsonGene.get(cell.getFeature().getName()))){
 							
-							System.out.println("ok");
-							
+							return false;							
 					}else{
 						
-						System.out.println("not ok");
+						return false;
 						
 					}
 						
 						
 						
 					}else{
-						System.out.println("not ok");
-
+						return false;
 					}
 					
 			}
@@ -349,14 +321,14 @@ if(verifJSONgenere(filepath,pcm)){
 			
 		}else{
 			
-			System.out.println("not ok");
+			return false;
 
 		}
 		
 		}
 		
 		
-		return false;
+		return true;
 	
 	}
 	public boolean isJSONValid(JSONObject json) throws JSONException {
