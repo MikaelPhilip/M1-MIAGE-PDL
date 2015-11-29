@@ -352,7 +352,7 @@ function personalizeDots(chart,data){
 //Function for define color
 function setColor(valueCol,dimColor){
 	var color;
-	if(typeof valueCol !== 'undefined'){
+	/*if(typeof valueCol !== 'undefined'){
 		//Trouver un myen effecise de determiner un %
 		var pourc= 100;
 		var r=21;
@@ -363,10 +363,10 @@ function setColor(valueCol,dimColor){
 		if(pourc>50){
 			g=g-pourc;
 		}
-		color="rgb("+r+","+g+",60)";
-	}else{
+		//color="rgb("+r+","+g+",60)";
+	}else{*/
 		color="rgb(21,120,169)";
-	}
+	//}
 	return color;
 }
 //Function that display the product's image

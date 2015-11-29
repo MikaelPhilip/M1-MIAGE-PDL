@@ -50,45 +50,46 @@ public class Generation implements GenerationInter {
 			// _logger.info(product.getCells());
 
 			JSONObject objJsonCell_ = new JSONObject();
-
-			for (Cell cell : product.getCells()) {
-				objJsonCell_.put(cell.getFeature().getName(), cell.getContent());
-
-				if (filters_) {
-					// récuperer le type de Feature
-					strTtypeFilter_ = cell.getInterpretation() + "";
-					strTtypeFilter_ = strTtypeFilter_.split("@")[0];
-					strTtypeFilter_ = strTtypeFilter_.split("\\.")[6];
-
-					strTtypeFilter_ = strTtypeFilter_.substring(0, strTtypeFilter_.length() - 4);
-					if (strTtypeFilter_.equals("NotAvailable")) {
-						strTtypeFilter_ = "StringValue";
+			if(product.getName() != null && !product.getName().equals("")){
+				for (Cell cell : product.getCells()) {
+					objJsonCell_.put(cell.getFeature().getName(), cell.getContent());
+	
+					if (filters_) {
+						// récuperer le type de Feature
+						strTtypeFilter_ = cell.getInterpretation() + "";
+						strTtypeFilter_ = strTtypeFilter_.split("@")[0];
+						strTtypeFilter_ = strTtypeFilter_.split("\\.")[6];
+	
+						strTtypeFilter_ = strTtypeFilter_.substring(0, strTtypeFilter_.length() - 4);
+						if (strTtypeFilter_.equals("NotAvailable")) {
+							strTtypeFilter_ = "StringValue";
+						}
+	
+						// tester le cell sous la forme entier suit une chaine de
+						// caractere
+						Pattern p = Pattern.compile("\\d.*");
+						Matcher m = p.matcher(cell.getContent());
+						boolean b = m.matches();
+	
+						if (b) {
+	
+							strTtypeFilter_ = "RealValue";
+	
+						}
+	
+						objfilterJSON_.put(cell.getFeature().getName(), strTtypeFilter_);
 					}
-
-					// tester le cell sous la forme entier suit une chaine de
-					// caractere
-					Pattern p = Pattern.compile("\\d.*");
-					Matcher m = p.matcher(cell.getContent());
-					boolean b = m.matches();
-
-					if (b) {
-
-						strTtypeFilter_ = "RealValue";
-
-					}
-
-					objfilterJSON_.put(cell.getFeature().getName(), strTtypeFilter_);
+	
 				}
 
+				filters_ = false;
+				_json.put(product.getName(), objJsonCell_);
 			}
 
-			filters_ = false;
-			_json.put(product.getName(), objJsonCell_);
-
 		}
-		_json.put("filters_", objfilterJSON_);
-		this.vérifDimension(_json.getJSONObject("filters_"));
-		choixDimension(_json.getJSONObject("filters_"));
+		_json.put("FILTERS", objfilterJSON_);
+		this.vérifDimension(_json.getJSONObject("FILTERS"));
+		choixDimension(_json.getJSONObject("FILTERS"));
 
 		this.afficherJSON(_json);
 
