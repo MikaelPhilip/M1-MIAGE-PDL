@@ -134,111 +134,54 @@ function LoadData(chart) {
 			text+="<p>"+dimSize+":"+data.point.size+"</p>";
 		}
 		if(typeof dimColor !== 'undefined'){
-			text+="<p>"+dimColor+":"+data.point.valcolor+"</p>";
+			text+="<p>"+dimColor+":"+data.point.datacolor+"</p>";
 		}
 		return text;
 	});
-	
-	/*Create group of color for fourth dimension*/
-	//If 4th dimension exist
-	/*if (typeof dimColor !== 'undefined'){
-		//Define groups (for fourth dimension (color)): each groupe has got one color
-		//Determine max for dimColor feature
-		var max;
-		var min;
-		//for each product we get his list of features
-		$.each(json, function(i, product) {
-			if (i != "FILTERS" && i !="DIMENSIONS"){
-				var value = parseFloat(product[dimColor],10);
-				//we search value for feature == name (feature for filter)
-			    //check if it's first time we search min value
-				if(typeof min === 'undefined'){
-					min=value;
-				}
-				//check if it's first time we search max value
-				if(typeof max === 'undefined'){
-					max=value;
-				}
-				//check if his value < min
-				if(value < min){
-					min=value;
-				}
-				//check if his value > max
-				if(value > max){
-					max=value;
-				}
-			}
-		});
-		//calcul difference
-		var ecart= max-min;
-		//Determine limit for each group/color
-		dimColorLow= min+(ecart/4);
-		dimColorMed= min+(ecart/2);
-		dimColorHigh= min+(ecart*3/4);
-		//Create four group in data
-		for (i = 0; i < 4; i++) {
-			//var to show value of each group
-			var limit;
-			if (i==0){
-				limit="<"+dimColorLow;
-			}else if (i==1){
-				limit="<"+dimColorMed;
-			}else if (i==2){
-				limit="<"+dimColorHigh;
-			}else if (i==3){
-				limit=">"+dimColorHigh;
-			}
-			data.push({
-				key: dimColor + limit,
-				values: []
-			});
-		}
-	}else{*/
-	//No 4th dimension: just one color,one group
-	/*Create group of data*/
-	/*data.push({
-		key: 'Produit',
-			values: []
-		});*/
-	//}
 	
 	/*Add to data each product*/
 	var group=0;
 	$.each(json, function(name, product) {
 		if (name != "FILTERS" && name !="DIMENSIONS"){
-			//If dimension 4 exist compare value to know the group where the dot will add
-			
-			/*if (typeof dimColor !== 'undefined'){
-				var val= parseFloat(product[dimColor],10);
-				if(val>dimColorLow && val<dimColorMed){
-					group=1;
-				}else if(val>dimColorMed && val<dimColorHigh){
-					group=2;
-				}else if(val>dimColorHigh){
-					group=3;
-				}
-			}*/
-			
 			var col = undefined;
-			//check  4th dimension
+			//check  dimensions and get value
+			var valx=0;
+			var valy=0;
+			var valsize=0;
+			var valcolor=0;
+			if(typeof product[dimX] !==undefined && product[dimX]!=""){
+				valx=parseFloat(product[dimX],10);
+			}
+			if(typeof product[dimY] !==undefined && product[dimY]!=""){
+				valy=parseFloat(product[dimY],10);
+			}
+			if(typeof dimSize !== undefined){
+				if(typeof product[dimSize] !==undefined && product[dimSize]!="" ){
+					valsize=parseFloat(product[dimSize],10);
+				}
+			}
 			if(typeof dimColor !== undefined){
-				col= product[dimColor];
+				if(typeof product[dimColor] !==undefined && product[dimColor]!="" ){
+					valcolor= product[dimColor];
+				}
 			}
 			data.push({
 				key: name,
 				values: []
 			});
 			data[group].values.push({
-				x: parseFloat(product[dimX],10), //set x position with value for first dimension
-				y: parseFloat(product[dimY],10), //set y position with value for second dimension
-				size: parseFloat(product[dimSize],10), //set size with value for third dimension
+				/*name*/
 				label: name, //add an object to stock name of product
-				//Add variable for contains url of picture.Undefined if url undefined or invaled
+				/*values for dimensions*/
+				x: valx, //set x position with value for first dimension
+				y: valy, //set y position with value for second dimension
+				size: valsize, //set size with value for third dimension
+				datacolor: valcolor,
+				/* data for personalize dots*/
 				image: undefined, //TODO: Call dans le json le parametre  url images
-				valcolor: product[dimColor],
-				dimColorValue: setColor(col,dimColor)
+				dimColorValue: setColor(col,dimColor) 
 			});
-			group++; //Attention bug d'affichage
+			group++;
 		}
 	});
 	
@@ -352,7 +295,7 @@ function personalizeDots(chart,data){
 //Function for define color
 function setColor(valueCol,dimColor){
 	var color;
-	/*if(typeof valueCol !== 'undefined'){
+	if(typeof valueCol !== 'undefined'){
 		//Trouver un myen effecise de determiner un %
 		var pourc= 100;
 		var r=21;
@@ -364,10 +307,11 @@ function setColor(valueCol,dimColor){
 			g=g-pourc;
 		}
 		//color="rgb("+r+","+g+",60)";
-	}else{*/
+	}else{
 		color="rgb(21,120,169)";
-	//}
+	}
 	return color;
+	
 }
 //Function that display the product's image
 function DisplayImg(urlImg){
