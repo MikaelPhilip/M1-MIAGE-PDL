@@ -59,7 +59,6 @@ function Generate(json){
 		.showDistX(true)
 		.showDistY(true)
 		.useVoronoi(true)
-		.color(d3.scale.category10().range())
 		.duration(300)
 		;
 		chart.dispatch.on('renderEnd', function(){
@@ -69,6 +68,7 @@ function Generate(json){
 		chart.yAxis.tickFormat(d3.format('.02f'));
 		chart.yAxis.orient("left").ticks(15);
 		chart.xAxis.orient("bottom").ticks(15);
+		chart.xAxis.tickFormat(d3.format('.02f'));
 		//call méthode for generate data and personalize axis,tooltips
 		var data=LoadData(chart);
 		//manage color or picture for each dot (in data, product,chart)
@@ -96,10 +96,6 @@ function LoadData(chart) {
 	var dimY; //second dimension
 	var dimSize; //third dimension
 	var dimColor; //fourth dimension
-	
-	var dimColorLow; //max value for first color
-	var dimColorMed; //max value for second color
-	var dimColorHigh; //max value for third color
 	
 	/*Get names of dimensions*/
 	//Get our dimension (name= name of feature, value= dimension number)
@@ -139,16 +135,45 @@ function LoadData(chart) {
 		return text;
 	});
 	
+	/*For 4th dimension we must determine min and max value (for calcule color when we create dots)*/
+	//If 4th dimension exist
+	var maxColor;
+	var minColor;
+	if (typeof dimColor !== 'undefined'){
+		//for each product we get his list of features
+		$.each(json, function(i, product) {
+			if (i != "FILTERS" && i !="DIMENSIONS"){
+				var value = parseFloat(product[dimColor],10);
+				//we search value for feature == name (feature for filter)
+			    //check if it's first time we search min value
+				if(typeof minColor === 'undefined'){
+					minColor=value;
+				}
+				//check if it's first time we search max value
+				if(typeof maxColor === 'undefined'){
+					maxColor=value;
+				}
+				//check if his value < min
+				if(value < minColor){
+					minColor=value;
+				}
+				//check if his value > max
+				if(value > maxColor){
+					maxColor=value;
+				}
+			}
+		});
+	}
+	
 	/*Add to data each product*/
 	var group=0;
 	$.each(json, function(name, product) {
 		if (name != "FILTERS" && name !="DIMENSIONS"){
-			var col = undefined;
 			//check  dimensions and get value
 			var valx=0;
 			var valy=0;
 			var valsize=0;
-			var valcolor=0;
+			var valcolor= "inconnue";
 			if(typeof product[dimX] !==undefined && product[dimX]!=""){
 				valx=parseFloat(product[dimX],10);
 			}
@@ -162,7 +187,7 @@ function LoadData(chart) {
 			}
 			if(typeof dimColor !== undefined){
 				if(typeof product[dimColor] !==undefined && product[dimColor]!="" ){
-					valcolor= product[dimColor];
+					valcolor= parseFloat(product[dimColor],10);
 				}
 			}
 			data.push({
@@ -176,10 +201,10 @@ function LoadData(chart) {
 				x: valx, //set x position with value for first dimension
 				y: valy, //set y position with value for second dimension
 				size: valsize, //set size with value for third dimension
-				datacolor: valcolor,
+				datacolor: valcolor, //for see value in tooltip
 				/* data for personalize dots*/
-				image: undefined, //TODO: Call dans le json le parametre  url images
-				dimColorValue: setColor(col,dimColor) 
+				pictures: product["image"],
+				dimColorValue: setColor(dimColor,valcolor,maxColor,minColor) //call function to set a rgb value for color
 			});
 			group++;
 		}
@@ -273,40 +298,37 @@ function GenerateFilter(json){
 
 //Function for manage picture for each dot (in data, product,chart)
 function personalizeDots(chart,data){
-	//Recherche pour cela d3 linear color scale
-	//TODO: 
-	//1)Faire un groupe pour un point (dans generation) OK
-	//2)Definir couleur de ce groupe en récupérant code couleur dans data[i].value[0].couleur  OK
-	//3)Code couleur géneré avec méthode SetColor(value) TODO
-	//4)Créer un array de taille nbPoint qui contient le code couleur et le fournir dans cette méthode OK
-	
 	//Change color of dots or change to picture
 	//array for set color for each dot
 	var colors=[]
 	$.each(data,function(index,value){
-		//TODO: gestion image
-		//Cas image = undefined , on appelle méthode pour regler couleur suivant valeur dimColorValue sinon on change le contenue du point avec l'image
-		//get color value
-		colors.push(data[index].values[0].dimColorValue);
+		if (typeof data[index].values[0].pictures !== 'undefined'){
+			DisplayImg(data[index].values[0].pictures) //fill the dot with picture
+		}else{
+			//Cas image = undefined, on selectionne la couleur
+			colors.push(data[index].values[0].dimColorValue);
+		}
 	});
 	chart.color(colors);
 }
 
 //Function for define color
-function setColor(valueCol,dimColor){
+function setColor(dimColor,valueCol,max,min){
 	var color;
-	if(typeof valueCol !== 'undefined'){
-		//Trouver un myen effecise de determiner un %
-		var pourc= 100;
-		var r=21;
-		var g=169;
-		if(pourc<=50){
-			r+=pourc;
+	if(typeof dimColor !== 'undefined' && valueCol != "inconnue"){
+		var pourc=parseFloat(((valueCol-min)/(max-min))*100,2);
+		//Trouver un moyen efficase de determiner un %
+		var r=80;
+		var g=180;
+		//if pourcentage <50% color varie green to yellow : we just modifiy red value for this
+		if (pourc<50){
+			r+=pourc*2;
+		//if pourcentage >50% color vairie yellow to red: we add 100 for red value and soustring pour-50 for green value
+		}else{
+			r+=100;
+			g=g-(pourc*0.75);
 		}
-		if(pourc>50){
-			g=g-pourc;
-		}
-		//color="rgb("+r+","+g+",60)";
+		color="rgb("+r+","+g+",40)";
 	}else{
 		color="rgb(21,120,169)";
 	}
@@ -315,16 +337,19 @@ function setColor(valueCol,dimColor){
 }
 //Function that display the product's image
 function DisplayImg(urlImg){
+	var urlImg= "http://www.nobelcar.fr/public/img/big/lamborghini-aventador-9-1024x680.jpg"; //ESSAI
+	 chart.style("fill", "url(#"+urlImg+")"); //TODO: trouver un moyen de choisir le point dont on veut changer le style
+	
 	//Préconditions : 
 	//Existance d'une URL
 	//L'URL est valide
 	// ********************
 	//On va ensuite créer un element que l'on ajoutera dans cette partie
 	//Variables qui contiendra tout le code html de l'image
-	var contentsImg="<div>			<img src = '";
-	contentsImg+=urlImg;
+	//var contentsImg="<div>			<img src = '";
+	//contentsImg+=urlImg;
 	//contentsImg+="http://www.nobelcar.fr/public/img/big/lamborghini-aventador-9-1024x680.jpg" 
-	contentsImg+="'class = 'img-circle'><div>";
+	//contentsImg+="'class = 'img-circle'><div>";
 	//return(contentsImg);
-	document.getElementById('pictures').innerHTML=contentsImg;
+	//document.getElementById('pictures').innerHTML=contentsImg;
 }
