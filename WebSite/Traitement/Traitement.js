@@ -55,10 +55,10 @@ function Generate(json){
 	nv.addGraph(function() {
 		//Initialisation
 		chart = nv.models.scatterChart()
+		.showLegend(false)
 		.showDistX(true)
 		.showDistY(true)
-		//.useVoronoi(true)
-		.color(["rgb(0,255,0)","rgb(255,0,0)"])
+		.useVoronoi(true)
 		.duration(300)
 		;
 		chart.dispatch.on('renderEnd', function(){
@@ -66,22 +66,22 @@ function Generate(json){
 		});
 		chart.xAxis.tickFormat(d3.format('.02f'));
 		chart.yAxis.tickFormat(d3.format('.02f'));
+		chart.yAxis.orient("left").ticks(15);
+		chart.xAxis.orient("bottom").ticks(15);
+		chart.xAxis.tickFormat(d3.format('.02f'));
 		//call méthode for generate data and personalize axis,tooltips
 		var data=LoadData(chart);
+		//manage color or picture for each dot (in data, product,chart)
+		personalizeDots(chart,data);
 		//add chart in html
+		
+		
 		d3.select('#graph svg')
 		//add data, product on chart
 		.datum(data)
 		//chart generation
 		.call(chart);
-		//manage color or picture for each dot (in data, product,chart)
-		//TODO: récuperer la liste des points dans le chart et modifier la coleur ou le contenu
-		console.log(chart);
-		$.each(data[0].values,function(index,value){
-			//Cas image = undefined , on appelle méthode pour regler couleur suivant valeur dimColorValue sinon on change le contenue du point avec l'image
-			console.log(value);
-		});
-		nv.utils.windowResize(chart.update);
+		//nv.utils.windowResize(chart.update);
 		chart.dispatch.on('stateChange', function(e) { ('New State:', JSON.stringify(e)); });
 		return chart;
 	});
@@ -96,10 +96,6 @@ function LoadData(chart) {
 	var dimY; //second dimension
 	var dimSize; //third dimension
 	var dimColor; //fourth dimension
-	
-	var dimColorLow; //max value for first color
-	var dimColorMed; //max value for second color
-	var dimColorHigh; //max value for third color
 	
 	/*Get names of dimensions*/
 	//Get our dimension (name= name of feature, value= dimension number)
@@ -125,8 +121,8 @@ function LoadData(chart) {
 	chart.yAxis.axisLabel(dimY);
     //Modify tooltips
 	chart.tooltip.contentGenerator(function(data){
+		console.log(data);
 		//Set the content of tooltip
-		//console.log(data);
 		var text="<p><b>Nom Produit: "+data.point.label+"</b></p>"
 		+"<p>"+dimX+":"+data.point.x+"</p>"
 		+"<p>"+dimY+":"+data.point.y+"</p>";
@@ -134,101 +130,86 @@ function LoadData(chart) {
 			text+="<p>"+dimSize+":"+data.point.size+"</p>";
 		}
 		if(typeof dimColor !== 'undefined'){
-			text+="<p>"+dimColor+":"+data.point.dimColorValue+"</p>";
+			text+="<p>"+dimColor+":"+data.point.datacolor+"</p>";
 		}
 		return text;
 	});
 	
-	
-	/*Create group of color for fourth dimension*/
+	/*For 4th dimension we must determine min and max value (for calcule color when we create dots)*/
 	//If 4th dimension exist
-	/*if (typeof dimColor !== 'undefined'){
-		//Define groups (for fourth dimension (color)): each groupe has got one color
-		//Determine max for dimColor feature
-		var max;
-		var min;
+	var maxColor;
+	var minColor;
+	if (typeof dimColor !== 'undefined'){
 		//for each product we get his list of features
 		$.each(json, function(i, product) {
 			if (i != "FILTERS" && i !="DIMENSIONS"){
 				var value = parseFloat(product[dimColor],10);
 				//we search value for feature == name (feature for filter)
 			    //check if it's first time we search min value
-				if(typeof min === 'undefined'){
-					min=value;
+				if(typeof minColor === 'undefined'){
+					minColor=value;
 				}
 				//check if it's first time we search max value
-				if(typeof max === 'undefined'){
-					max=value;
+				if(typeof maxColor === 'undefined'){
+					maxColor=value;
 				}
 				//check if his value < min
-				if(value < min){
-					min=value;
+				if(value < minColor){
+					minColor=value;
 				}
 				//check if his value > max
-				if(value > max){
-					max=value;
+				if(value > maxColor){
+					maxColor=value;
 				}
 			}
 		});
-		//calcul difference
-		var ecart= max-min;
-		//Determine limit for each group/color
-		dimColorLow= min+(ecart/4);
-		dimColorMed= min+(ecart/2);
-		dimColorHigh= min+(ecart*3/4);
-		//Create four group in data
-		for (i = 0; i < 4; i++) {
-			//var to show value of each group
-			var limit;
-			if (i==0){
-				limit="<"+dimColorLow;
-			}else if (i==1){
-				limit="<"+dimColorMed;
-			}else if (i==2){
-				limit="<"+dimColorHigh;
-			}else if (i==3){
-				limit=">"+dimColorHigh;
-			}
-			data.push({
-				key: dimColor + limit,
-				values: []
-			});
-		}
-	}else{*/
-	//No 4th dimension: just one color,one group
-	/*Create group of data*/
-	data.push({
-		key: 'Produit',
-			values: []
-		});
-	//}
+	}
 	
 	/*Add to data each product*/
+	var group=0;
 	$.each(json, function(name, product) {
 		if (name != "FILTERS" && name !="DIMENSIONS"){
-			//If dimension 4 exist compare value to know the group where the dot will add
-			var group=0;
-			/*if (typeof dimColor !== 'undefined'){
-				var val= parseFloat(product[dimColor],10);
-				if(val>dimColorLow && val<dimColorMed){
-					group=1;
-				}else if(val>dimColorMed && val<dimColorHigh){
-					group=2;
-				}else if(val>dimColorHigh){
-					group=3;
+			//check  dimensions and get value
+			var valx=0;
+			var valy=0;
+			var valsize=0;
+			var valcolor= "inconnue";
+			if(typeof product[dimX] !==undefined && product[dimX]!=""){
+				valx=parseFloat(product[dimX],10);
+			}
+			if(typeof product[dimY] !==undefined && product[dimY]!=""){
+				valy=parseFloat(product[dimY],10);
+			}
+			if(typeof dimSize !== undefined){
+				if(typeof product[dimSize] !==undefined && product[dimSize]!="" ){
+					valsize=parseFloat(product[dimSize],10);
 				}
-			}*/
-			data[group].values.push({
-				x: parseFloat(product[dimX],10), //set x position with value for first dimension
-				y: parseFloat(product[dimY],10), //set y position with value for second dimension
-				size: parseFloat(product[dimSize],10), //set size with value for third dimension
-				label: name, //add an object to stock name of product
-				//Add variable for contains url of picture.Undefined if url undefined or invaled
-				image: undefined, //TODO: Call dans le json le parametre  url images
-				dimColorValue: product[dimColor]
+			}
+			if(typeof dimColor !== undefined){
+				if(typeof product[dimColor] !==undefined && product[dimColor]!="" ){
+					valcolor= parseFloat(product[dimColor],10);
+				}
+			}
+			data.push({
+				key: name,
+				values: []
 			});
+			data[group].values.push({
+				/*name*/
+				label: name, //add an object to stock name of product
+				/*values for dimensions*/
+				x: valx, //set x position with value for first dimension
+				y: valy, //set y position with value for second dimension
+				size: valsize, //set size with value for third dimension
+				datacolor: valcolor, //for see value in tooltip
+				/* data for personalize dots*/
+				pictures: product["image"],
+				dimColorValue: setColor(dimColor,valcolor,maxColor,minColor) //call function to set a rgb value for color
+			});
+			group++;
 		}
 	});
+	
 	return data;
 }
 
@@ -315,18 +296,60 @@ function GenerateFilter(json){
 	$(".span2").slider({});
 }
 
+//Function for manage picture for each dot (in data, product,chart)
+function personalizeDots(chart,data){
+	//Change color of dots or change to picture
+	//array for set color for each dot
+	var colors=[]
+	$.each(data,function(index,value){
+		if (typeof data[index].values[0].pictures !== 'undefined'){
+			DisplayImg(data[index].values[0].pictures) //fill the dot with picture
+		}else{
+			//Cas image = undefined, on selectionne la couleur
+			colors.push(data[index].values[0].dimColorValue);
+		}
+	});
+	chart.color(colors);
+}
+
+//Function for define color
+function setColor(dimColor,valueCol,max,min){
+	var color;
+	if(typeof dimColor !== 'undefined' && valueCol != "inconnue"){
+		var pourc=parseFloat(((valueCol-min)/(max-min))*100,2);
+		//Trouver un moyen efficase de determiner un %
+		var r=80;
+		var g=180;
+		//if pourcentage <50% color varie green to yellow : we just modifiy red value for this
+		if (pourc<50){
+			r+=pourc*2;
+		//if pourcentage >50% color vairie yellow to red: we add 100 for red value and soustring pour-50 for green value
+		}else{
+			r+=100;
+			g=g-(pourc*0.75);
+		}
+		color="rgb("+r+","+g+",40)";
+	}else{
+		color="rgb(21,120,169)";
+	}
+	return color;
+	
+}
 //Function that display the product's image
 function DisplayImg(urlImg){
+	var urlImg= "http://www.nobelcar.fr/public/img/big/lamborghini-aventador-9-1024x680.jpg"; //ESSAI
+	 chart.style("fill", "url(#"+urlImg+")"); //TODO: trouver un moyen de choisir le point dont on veut changer le style
+	
 	//Préconditions : 
 	//Existance d'une URL
 	//L'URL est valide
 	// ********************
 	//On va ensuite créer un element que l'on ajoutera dans cette partie
 	//Variables qui contiendra tout le code html de l'image
-	var contentsImg="<div>			<img src = 'http://";//ajout de http:// car bug lors de l'ajout d'URL dans Open compare (issue créé)
-	contentsImg+=urlImg;
-	//contentsImg+="www.nobelcar.fr/public/img/big/lamborghini-aventador-9-1024x680.jpg" 
-	contentsImg+="'class = 'img-circle'><div>";
+	//var contentsImg="<div>			<img src = '";
+	//contentsImg+=urlImg;
+	//contentsImg+="http://www.nobelcar.fr/public/img/big/lamborghini-aventador-9-1024x680.jpg" 
+	//contentsImg+="'class = 'img-circle'><div>";
 	//return(contentsImg);
-	document.getElementById('pictures').innerHTML=contentsImg;
+	//document.getElementById('pictures').innerHTML=contentsImg;
 }

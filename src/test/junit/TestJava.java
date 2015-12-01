@@ -2,6 +2,7 @@ package test.junit;
 
 import java.io.IOException;
 
+import main.generationJSON_impl.Generation;
 import main.traitement_Impl.Traitement;
 
 import org.junit.*;
@@ -13,6 +14,7 @@ import org.junit.Test;
 public class TestJava {
 
 	public Traitement traitement;
+	public Generation generation;
 	/**
 	 * @throws java.lang.Exception
 	 * Méthode d'initialisation
@@ -21,6 +23,8 @@ public class TestJava {
 	public void setUp() throws Exception {
 		//Créer un objet traitement
 		traitement = new Traitement();
+		generation = new Generation();
+		
 	}
 	
 	/**
@@ -32,6 +36,37 @@ public class TestJava {
 		traitement.pcmLoad("pcms/example.pcm");
 		assertNotNull(traitement.getPcm());
 	}
+	
+	//test sur product not ok
+	@Test
+	public void testCompareJsonPcm1() throws IOException{
+		traitement.pcmLoad("pcms/example.pcm");
+		assertNotNull(traitement.getPcm());
+		System.out.println(traitement.getPcm());
+		generation.generateJSON(traitement.getPcm());
+		assertFalse("test sur product not ok",generation.verifJSONgenere("./testJSON/testCompareJsonPcm1.json",traitement.getPcm()));
+		//assertTrue(generation.verifJSONgenere("pcms/example.pcm", traitement.pc));
+	}
+	// test sur les feature not ok ;
+	@Test
+	public void testCompareJsonPcm2() throws IOException{
+		traitement.pcmLoad("pcms/example.pcm");
+		assertNotNull(traitement.getPcm());
+		System.out.println(traitement.getPcm());
+		generation.generateJSON(traitement.getPcm());
+		assertFalse("test sur les feature not ok ",generation.verifJSONgenere("./testJSON/testCompareJsonPcm2.json",traitement.getPcm()));
+	}
+	
+	// test sur les cell not ok ;
+	@Test
+	public void testCompareJsonPcm3() throws IOException{
+		traitement.pcmLoad("pcms/example.pcm");
+		assertNotNull(traitement.getPcm());
+		System.out.println(traitement.getPcm());
+		generation.generateJSON(traitement.getPcm());
+		assertFalse("test sur les cell not ok  ",generation.verifJSONgenere("./testJSON/testCompareJsonPcm3.json",traitement.getPcm()));
+	}
+	
 	
 	/**
 	 * Méthode de chargement pcm : cas fichier inexistant
