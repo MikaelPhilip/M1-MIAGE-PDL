@@ -14,7 +14,7 @@ public class Main {
 		
 		//TODO: faire une interface qui permettra d'indiquer le chemin du fichier (ou sur console)
 		//Chargement d'un fichier
-		traitement.pcmLoad("pcms/camera_img.pcm");
+		traitement.pcmLoad("pcms/foot.pcm");
 		
 		
 	}

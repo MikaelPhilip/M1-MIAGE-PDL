@@ -40,7 +40,6 @@ function LoadJson(){
 		json = file;
 		GenerateFilter(json);
 		Generate(json);	
-		//browseJson(json);
 	})
 	.fail(function(jqXHR, status, error){
        alert("Erreur lors du chargement: Veuillez utiliser un fichier json valide.Message: "+ error);
@@ -55,7 +54,7 @@ function Generate(json){
 	nv.addGraph(function() {
 		//Initialisation
 		chart = nv.models.scatterChart()
-		.showLegend(false)
+		.showLegend(true)
 		.showDistX(true)
 		.showDistY(true)
 		.useVoronoi(true)
@@ -64,18 +63,20 @@ function Generate(json){
 		chart.dispatch.on('renderEnd', function(){
 		console.log('render complete');
 		});
-		chart.xAxis.tickFormat(d3.format('.02f'));
-		chart.yAxis.tickFormat(d3.format('.02f'));
-		chart.yAxis.orient("left").ticks(15);
-		chart.xAxis.orient("bottom").ticks(15);
-		chart.xAxis.tickFormat(d3.format('.02f'));
 		//call méthode for generate data and personalize axis,tooltips
 		var data=LoadData(chart);
 		//manage color or picture for each dot (in data, product,chart)
 		personalizeDots(chart,data);
+		chart.xAxis.tickFormat(d3.format('.02f'));
+		chart.yAxis.tickFormat(d3.format('.02f'));
+		chart.yAxis.orient("left").ticks(15);
+		chart.xAxis.orient("bottom").ticks(15);
+		
+		//chart.pointActive(function (d) { // d has x, y, size, shape, and series attributes. // here, we disable all points that are not a circle return d.shape !== 'circle'; })
+		//console.log(d);
+		//});
+		
 		//add chart in html
-		
-		
 		d3.select('#graph svg')
 		//add data, product on chart
 		.datum(data)
@@ -304,6 +305,7 @@ function personalizeDots(chart,data){
 	$.each(data,function(index,value){
 		if (typeof data[index].values[0].pictures !== 'undefined'){
 			DisplayImg(data[index].values[0].pictures) //fill the dot with picture
+			colors.push("rgb(0,0,0)"); //no color for this dot
 		}else{
 			//Cas image = undefined, on selectionne la couleur
 			colors.push(data[index].values[0].dimColorValue);
@@ -326,7 +328,7 @@ function setColor(dimColor,valueCol,max,min){
 		//if pourcentage >50% color vairie yellow to red: we add 100 for red value and soustring pour-50 for green value
 		}else{
 			r+=100;
-			g=g-(pourc*0.75);
+			g=g-(180*(((pourc-50)*2)/100)); //example: 180*((5*2)/100) (for 55%)
 		}
 		color="rgb("+r+","+g+",40)";
 	}else{
@@ -337,8 +339,9 @@ function setColor(dimColor,valueCol,max,min){
 }
 //Function that display the product's image
 function DisplayImg(urlImg){
+	
 	var urlImg= "http://www.nobelcar.fr/public/img/big/lamborghini-aventador-9-1024x680.jpg"; //ESSAI
-	 chart.style("fill", "url(#"+urlImg+")"); //TODO: trouver un moyen de choisir le point dont on veut changer le style
+	//chart.style("fill", "url(#http://"+urlImg+")"); //TODO: trouver un moyen de choisir le point dont on veut changer le style
 	
 	//Préconditions : 
 	//Existance d'une URL
