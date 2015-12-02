@@ -62,7 +62,7 @@ public class LireJSONParametres {
     	 
  public JSONObject lireJSONgenere(String path){
     		 
-    		 JSONObject jsonObject = null;
+    JSONObject jsonObject = null;
 	JSONParser parser = new JSONParser();
 
 	try {
@@ -71,7 +71,7 @@ public class LireJSONParametres {
 
 		jsonObject = (JSONObject) obj;
 
-		
+		log.info(path);
 		log.info("lireJSONgenere " +jsonObject);
 
 		for(int i = 1; i <= jsonObject.size(); i++)

@@ -5,8 +5,9 @@ import java.io.IOException;
 import main.generationJSON_impl.Generation;
 import main.traitement_Impl.Traitement;
 
-import org.junit.*;
 import static org.junit.Assert.*;
+
+import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +16,8 @@ public class TestJava {
 
 	public Traitement traitement;
 	public Generation generation;
+	public String path;
+	public JSONObject _jsonGenere ;
 	/**
 	 * @throws java.lang.Exception
 	 * Méthode d'initialisation
@@ -24,6 +27,8 @@ public class TestJava {
 		//Créer un objet traitement
 		traitement = new Traitement();
 		generation = new Generation();
+		path = generation.get_filepath();
+		_jsonGenere = generation.get_json();
 		
 	}
 	
@@ -33,40 +38,48 @@ public class TestJava {
 	 */
 	@Test
 	public void testChargementPcm1() throws IOException{
-		traitement.pcmLoad("pcms/example.pcm");
+		traitement.pcmLoad("pcms/data.pcm");
 		assertNotNull(traitement.getPcm());
 	}
 	
 	//test sur product not ok
 	@Test
 	public void testCompareJsonPcm1() throws IOException{
-		traitement.pcmLoad("pcms/example.pcm");
+		traitement.pcmLoad("pcms/data.pcm");
 		assertNotNull(traitement.getPcm());
-		System.out.println(traitement.getPcm());
 		generation.generateJSON(traitement.getPcm());
-		assertFalse("test sur product not ok",generation.verifJSONgenere("./testJSON/testCompareJsonPcm1.json",traitement.getPcm()));
-		//assertTrue(generation.verifJSONgenere("pcms/example.pcm", traitement.pc));
+		_jsonGenere=generation.get_json();
+		_jsonGenere.put("ammar", "barry");
+		//System.out.println("Ammar Barry" +_jsonGenere);
+		assertFalse("test sur product not ok",generation.verifJSONgenere(generation.get_json(),traitement.getPcm()));
+		
 	}
 	// test sur les feature not ok ;
 	@Test
 	public void testCompareJsonPcm2() throws IOException{
-		traitement.pcmLoad("pcms/example.pcm");
+		traitement.pcmLoad("pcms/data.pcm");
 		assertNotNull(traitement.getPcm());
 		System.out.println(traitement.getPcm());
-		generation.generateJSON(traitement.getPcm());
-		assertFalse("test sur les feature not ok ",generation.verifJSONgenere("./testJSON/testCompareJsonPcm2.json",traitement.getPcm()));
+//		assertFalse("test sur les feature not ok ",generation.verifJSONgenere("./testJSON/testCompareJsonPcm2.json",traitement.getPcm(),null));
 	}
 	
 	// test sur les cell not ok ;
 	@Test
 	public void testCompareJsonPcm3() throws IOException{
-		traitement.pcmLoad("pcms/example.pcm");
+		traitement.pcmLoad("pcms/data.pcm");
 		assertNotNull(traitement.getPcm());
-		System.out.println(traitement.getPcm());
-		generation.generateJSON(traitement.getPcm());
-		assertFalse("test sur les cell not ok  ",generation.verifJSONgenere("./testJSON/testCompareJsonPcm3.json",traitement.getPcm()));
+		System.out.println(traitement.getPcm().getName());
+//		assertFalse("test sur les cell not ok  ",generation.verifJSONgenere("./testJSON/testCompareJsonPcm3.json",traitement.getPcm(),null));
 	}
 	
+	// cas json genere ok
+	@Test
+	public void testCompareJsonPcm4() throws IOException{
+		traitement.pcmLoad("pcms/data.pcm");
+		assertNotNull(traitement.getPcm());
+		System.out.println(generation.get_filepath());
+//		assertTrue("test sur les cell not ok  ",generation.verifJSONgenere(null,traitement.getPcm(),generation.get_json()));
+	}
 	
 	/**
 	 * Méthode de chargement pcm : cas fichier inexistant

@@ -23,9 +23,20 @@ public class Generation implements GenerationInter {
 
 	JSONObject _json = new JSONObject();
 
+	public JSONObject get_json() {
+		return _json;
+	}
+
 	JSONObject _jsonDimension;
-	String _filepath;
+	public String _filepath = "./json/generation.json";
 	LireJSONParametres lire;
+
+	
+	public Generation() {
+		this.lire  =new LireJSONParametres();
+	}
+
+
 
 	@Override
 	public void generateJSON(PCM pcmP_) {
@@ -88,36 +99,14 @@ public class Generation implements GenerationInter {
 
 		}
 		_json.put("FILTERS", objfilterJSON_);
-		this.vérifDimension(_json.getJSONObject("FILTERS"));
 		choixDimension(_json.getJSONObject("FILTERS"));
-
+		_logger.info(_json);
 		this.afficherJSON(_json);
-
-		if (verifJSONgenere("./testJSON/testCompareJsonPcm2.json", pcmP_)) {
-			_logger.info("True");
-
-		}
+		//this.verifJSONgenere(_json, pcmP_);
 
 	}
 
-	private void vérifDimension(JSONObject jsonfilters_) {
-		// _logger.setLevel(Level.OFF);
-		// TODO Auto-generated method stub
-		int nbDimension = 0;
-		for (Iterator iterator = jsonfilters_.keys(); iterator.hasNext();) {
-			Object cle = iterator.next();
-			Object val = jsonfilters_.get(String.valueOf(cle));
 
-			if (val.equals("RealValue")) {
-
-				nbDimension++;
-
-				_logger.info("cle=" + cle + ", valeur=" + val);
-			}
-
-		}
-
-	}
 
 	public void choixDimension(JSONObject dimensionsJsonP_) {
 		// _logger.setLevel(Level.OFF);
@@ -149,7 +138,6 @@ public class Generation implements GenerationInter {
 		String dimension = null;
 
 		_logger.info("_jsonDimension = " + dimensionsJsonP_.length());
-		lire = new LireJSONParametres();
 
 		org.json.simple.JSONObject jsonParametre = lire.lireJSONParametres(pathParametres);
 		switch (jsonParametre.size()) {
@@ -213,7 +201,7 @@ public class Generation implements GenerationInter {
 		if (isJSONValid(json)) {
 			try {
 
-				_filepath = "./json/generation.json";
+			
 
 				File objFile_ = new File(_filepath);
 				FileWriter objFileWriter_ = new FileWriter(objFile_);
@@ -231,42 +219,82 @@ public class Generation implements GenerationInter {
 
 	}
 
-	public boolean verifJSONgenere(String pathJSONgenere, PCM pcmP_) {
+	
+	public String get_filepath() {
+		return _filepath;
+	}
 
-		_logger.info("je suis verif json ");
 
-		org.json.simple.JSONObject jsonGenere = lire.lireJSONgenere(pathJSONgenere);
 
-		for (Product product : pcmP_.getProducts()) {
+	public boolean verifJSONgenere(JSONObject jsonP_, PCM pcmP_ ) {
+		org.json.simple.JSONObject jsonGenere = null ;
+		jsonP_.put("ammar", "barry");
 
-			if (jsonGenere.get(product.getName()) != null) {
-				for (Cell cell : product.getCells()) {
+		_logger.info("Ammar barry");
+		
+//		if(pathJSONgenere.isEmpty()){
+//		 jsonGenere = lire.lireJSONgenere(pathJSONgenere);
+//		 for (Product product : pcmP_.getProducts()) {
+//
+//				if (jsonGenere.get(product.getName()) != null) {
+//					for (Cell cell : product.getCells()) {
+//
+//						org.json.simple.JSONObject jsonGene = (org.json.simple.JSONObject) jsonGenere
+//								.get(product.getName());
+//						if (jsonGene.get(cell.getFeature().getName()) != null) {
+//							
+//							if (cell.getContent().equals(jsonGene.get(cell.getFeature().getName()))) {
+//							} else {
+//
+//								return false;
+//
+//							}
+//
+//						} else {
+//							return false;
+//						}
+//
+//					}
+//
+//				} else {
+//
+//					return false;
+//
+//				}
+//
+//			}
+//		}else{
+			for (Product product : pcmP_.getProducts()) {
 
-					org.json.simple.JSONObject jsonGene = (org.json.simple.JSONObject) jsonGenere
-							.get(product.getName());
-					if (jsonGene.get(cell.getFeature().getName()) != null) {
-						if (cell.getContent().equals(jsonGene.get(cell.getFeature().getName()))) {
+				if (jsonP_.has(product.getName())) {
+					for (Cell cell : product.getCells()) {
 
-							return false;
+						JSONObject jsonGene = (JSONObject) jsonP_.get(product.getName());
+						if (jsonGene.get(cell.getFeature().getName()) != null) {
+							
+							if (cell.getContent().equals(jsonGene.get(cell.getFeature().getName()))) {
+							} else {
+
+								return false;
+
+							}
+
 						} else {
-
 							return false;
-
 						}
 
-					} else {
-						return false;
 					}
+
+				} else {
+
+					return false;
 
 				}
 
-			} else {
-
-				return false;
-
 			}
-
-		}
+//		}
+		System.out.println(jsonP_);
+		
 
 		return true;
 
