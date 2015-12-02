@@ -1,6 +1,7 @@
 package test.junit;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 import main.generationJSON_impl.Generation;
 import main.traitement_Impl.Traitement;
@@ -28,7 +29,7 @@ public class TestJava {
 		traitement = new Traitement();
 		generation = new Generation();
 		path = generation.get_filepath();
-		_jsonGenere = generation.get_json();
+		//_jsonGenere = generation.get_json();
 		
 	}
 	
@@ -49,9 +50,11 @@ public class TestJava {
 		assertNotNull(traitement.getPcm());
 		generation.generateJSON(traitement.getPcm());
 		_jsonGenere=generation.get_json();
-		_jsonGenere.put("ammar", "barry");
-		//System.out.println("Ammar Barry" +_jsonGenere);
-		assertFalse("test sur product not ok",generation.verifJSONgenere(generation.get_json(),traitement.getPcm()));
+		Iterator<String> it =  _jsonGenere.keys();
+		_jsonGenere.remove(it.next());
+		//System.out.println("Ammar Barry" + generation.verifJSONgenere(_jsonGenere,traitement.getPcm()));
+//		assertTrue("test sur product not ok",generation.generateJSON(traitement.getPcm()));
+		assertFalse("Remove the first Product" , generation.verifJSONgenere(_jsonGenere,traitement.getPcm()));
 		
 	}
 	// test sur les feature not ok ;
@@ -59,7 +62,7 @@ public class TestJava {
 	public void testCompareJsonPcm2() throws IOException{
 		traitement.pcmLoad("pcms/data.pcm");
 		assertNotNull(traitement.getPcm());
-		System.out.println(traitement.getPcm());
+		//System.out.println(traitement.getPcm());
 //		assertFalse("test sur les feature not ok ",generation.verifJSONgenere("./testJSON/testCompareJsonPcm2.json",traitement.getPcm(),null));
 	}
 	
@@ -68,7 +71,7 @@ public class TestJava {
 	public void testCompareJsonPcm3() throws IOException{
 		traitement.pcmLoad("pcms/data.pcm");
 		assertNotNull(traitement.getPcm());
-		System.out.println(traitement.getPcm().getName());
+		//System.out.println(traitement.getPcm().getName());
 //		assertFalse("test sur les cell not ok  ",generation.verifJSONgenere("./testJSON/testCompareJsonPcm3.json",traitement.getPcm(),null));
 	}
 	
@@ -77,7 +80,7 @@ public class TestJava {
 	public void testCompareJsonPcm4() throws IOException{
 		traitement.pcmLoad("pcms/data.pcm");
 		assertNotNull(traitement.getPcm());
-		System.out.println(generation.get_filepath());
+		//System.out.println(generation.get_filepath());
 //		assertTrue("test sur les cell not ok  ",generation.verifJSONgenere(null,traitement.getPcm(),generation.get_json()));
 	}
 	

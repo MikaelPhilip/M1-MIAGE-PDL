@@ -21,7 +21,7 @@ import main.generationJSON.GenerationInter;
 public class Generation implements GenerationInter {
 	private static final Logger _logger = Logger.getLogger(Generation.class);
 
-	JSONObject _json = new JSONObject();
+	JSONObject _json ;
 
 	public JSONObject get_json() {
 		return _json;
@@ -34,6 +34,7 @@ public class Generation implements GenerationInter {
 	
 	public Generation() {
 		this.lire  =new LireJSONParametres();
+		this._json = new JSONObject();
 	}
 
 
@@ -100,10 +101,10 @@ public class Generation implements GenerationInter {
 		}
 		_json.put("FILTERS", objfilterJSON_);
 		choixDimension(_json.getJSONObject("FILTERS"));
-		_logger.info(_json);
-		this.afficherJSON(_json);
-		//this.verifJSONgenere(_json, pcmP_);
-
+		_logger.info("ammar"+_json);
+		//this.afficherJSON(_json);
+		
+//return this.verifJSONgenere(_json, pcmP_);
 	}
 
 
@@ -228,42 +229,10 @@ public class Generation implements GenerationInter {
 
 	public boolean verifJSONgenere(JSONObject jsonP_, PCM pcmP_ ) {
 		org.json.simple.JSONObject jsonGenere = null ;
-		jsonP_.put("ammar", "barry");
-
-		_logger.info("Ammar barry");
+	
 		
-//		if(pathJSONgenere.isEmpty()){
-//		 jsonGenere = lire.lireJSONgenere(pathJSONgenere);
-//		 for (Product product : pcmP_.getProducts()) {
-//
-//				if (jsonGenere.get(product.getName()) != null) {
-//					for (Cell cell : product.getCells()) {
-//
-//						org.json.simple.JSONObject jsonGene = (org.json.simple.JSONObject) jsonGenere
-//								.get(product.getName());
-//						if (jsonGene.get(cell.getFeature().getName()) != null) {
-//							
-//							if (cell.getContent().equals(jsonGene.get(cell.getFeature().getName()))) {
-//							} else {
-//
-//								return false;
-//
-//							}
-//
-//						} else {
-//							return false;
-//						}
-//
-//					}
-//
-//				} else {
-//
-//					return false;
-//
-//				}
-//
-//			}
-//		}else{
+		
+
 			for (Product product : pcmP_.getProducts()) {
 
 				if (jsonP_.has(product.getName())) {
@@ -292,8 +261,8 @@ public class Generation implements GenerationInter {
 				}
 
 			}
-//		}
-		System.out.println(jsonP_);
+
+		
 		
 
 		return true;
