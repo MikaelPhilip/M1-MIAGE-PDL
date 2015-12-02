@@ -129,7 +129,7 @@ function LoadData(chart) {
 		var text="";
 		//Set the content of tooltip
 		//If we have picture
-		if(typeof data.point.pictures !== 'undefined'){
+		if(typeof data.point.pictures !== 'undefined' && data.point.pictures !=""){
 			text+="<div style='text-align: center'><img src='http://"+data.point.pictures+"' class ='img-circle'></div>";
 		}
 		text+="<p><b>Nom Produit: "+data.point.label+"</b></p>"
