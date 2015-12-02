@@ -1,4 +1,1 @@
-function hello(){
-
-alert('hi');
-}
+//TODO: fonction gestion dynamique des filtres: listeners

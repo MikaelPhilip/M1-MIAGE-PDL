@@ -1,13 +1,14 @@
 var json;
-//Fonction qui va lancer la génération des filtres et du graphiques aprés avori trouvé et charger un json
+//Function for launch LoadJson and chart generation
 function traitement(){
-	/* functionality for allow user to choose json
+
+	/* functionality for allow user to choose json DISABLED: json file is load with search a local specific file
 	//create a listener when a file is selected: this listener launch treatement
 	document.getElementById('fileLoader').addEventListener("change", function(event){
 	//We launch treatement
 	LoadJson(event); //param: file selected
 	});*/
-	//Neutralisation du cache pour éviter de conserver des vielles données de json
+	//Cache is disabled to avoid keep old json data
 	$(document).ready(function() {
 		$.ajaxSetup({ cache: false });
 	});
@@ -16,7 +17,7 @@ function traitement(){
 
 //Function for load one of generates Json 
 function LoadJson(){
-	/* functionality for allow user to choose json
+	/* functionality for allow user to choose json DISABLED: json file is load with search a local specific file
 	//create a reader
 	var reader = new FileReader();
     reader.onload = onReaderLoad; //Call an internal function when reading text
@@ -35,11 +36,13 @@ function LoadJson(){
 		Generate(json);	
     }
 	*/
-	//Serch a specific json file in file,if parse fail an error message appear
+	//Serch a specific json file in local repository
+	//if parse fail an error message appear
+	//if parse succes we call function for generate filters and chart
 	$.get("../../json/generation.json").success(function(file){	
 		json = file;
-		GenerateFilter(json);
-		Generate(json);	
+		GenerateFilter(json); //generate filters
+		Generate(json);	 //generate chart
 	})
 	.fail(function(jqXHR, status, error){
        alert("Erreur lors du chargement: Veuillez utiliser un fichier json valide.Message: "+ error);
@@ -48,113 +51,103 @@ function LoadJson(){
 }
 //Fonction generate chart (dimension)
 function Generate(json){
-
-	// create the chart
+	//Initialisation and set charts parameters
 	var chart; //Var Chart
 	nv.addGraph(function() {
-		//Initialisation
-		chart = nv.models.scatterChart()
-		.showLegend(false)
-		.showDistX(true)
-		.showDistY(true)
-		.useVoronoi(true)
-		.duration(300)
-		;
-		chart.dispatch.on('renderEnd', function(){
-		console.log('render complete');
-		});
-		//call méthode for generate data and personalize axis,tooltips
-		var data=LoadData(chart);
-		chart.xAxis.tickFormat(d3.format('.02f'));
-		chart.yAxis.tickFormat(d3.format('.02f'));
-		chart.yAxis.orient("left").ticks(15);
-		chart.xAxis.orient("bottom").ticks(15);
-		//manage color or picture for each dot (in data, product,chart)
-		personalizeDots(chart,data);
+		chart = nv.models.scatterChart() //type of chart
+		.showLegend(false) //hide legend
+		.showDistX(true) //show X axis
+		.showDistY(true) //show Y axis
+		.useVoronoi(true) 
+		.duration(300) ;
 		
-		//chart.pointActive(function (d) { // d has x, y, size, shape, and series attributes. // here, we disable all points that are not a circle return d.shape !== 'circle'; })
-		//console.log(d);
-		//});
+		chart.xAxis.tickFormat(d3.format('.02f')); //set tick format x
+		chart.yAxis.tickFormat(d3.format('.02f')); //set tick format y
+		chart.yAxis.orient("left").ticks(15); //set number values and position x axis
+		chart.xAxis.orient("bottom").ticks(15); //set number values and position y axis
+		
+		var data=LoadData(chart); //call function to create an array of data
+		personalizeDots(chart,data); //manage color for each future dot
 		
 		//add chart in html
 		d3.select('#graph svg')
-		//add data, product on chart
+		//add data, product on chart (generate dot)
 		.datum(data)
 		//chart generation
 		.call(chart);
 		nv.utils.windowResize(chart.update);
-		var svg = d3.select("body").append("svg");
-		svg.selectAll(".dot").data(data).enter().append("circle").style("fill", "http://http://medias.lequipe.fr/img-sportif-foot/22080/50?20151127");
-		chart.dispatch.on('stateChange', function(e) { ('New State:', JSON.stringify(e)); });
-		
 		return chart;
 	});
 }				
 
-//Fonction de genration des données (ici un exemple qui genere aléatoirement
+//Fonction for generate data array for the dots with our json data
 function LoadData(chart) { 
-	//array for our dot on chart 
+	//array for our dot data
 	var data=[];
-	//params reprents our dimension
+	//parameters which reprents our dimension
 	var dimX; //first dimension
 	var dimY; //second dimension
 	var dimSize; //third dimension
 	var dimColor; //fourth dimension
 	
 	/*Get names of dimensions*/
-	//Get our dimension (name= name of feature, value= dimension number)
-	$.each(json["DIMENSIONS"], function(name, value) {
-		if(value==1){
-			dimX=name;
-		}else if(value==2){
-			dimY=name;
-		}else if(value==3){
-			dimSize=name;
-		}else if(value==4){
-			dimColor=name;
-		}
-	});
+	//Get our dimension: search in json "DIMENSIONS" object (name= name of feature, value= dimension number)
+	if(typeof json["DIMENSIONS"] !== 'undefined'){
+		$.each(json["DIMENSIONS"], function(name, value) {
+			if(value==1){
+				dimX=name;
+			}else if(value==2){
+				dimY=name;
+			}else if(value==3){
+				dimSize=name;
+			}else if(value==4){
+				dimColor=name;
+			}
+		});
+	}
+	//If we don't have at least two dimensions there are an error in JSON data: end of exection
 	if ((typeof dimX === 'undefined')||(typeof dimY === 'undefined')){
 		alert("Erreur le json ne défini pas deux premieres dimensions");
+		return;
 	}	
 	
-	/*Parametize labels and tooltips*/
-	//Add label for x and y 
-	chart.xAxis.axisLabel(dimX+" Taille des points:"+dimSize);
-	//Add label for x and y 
+	/*Parametize labels and tooltips (make this only now because we need to know dimensions)*/
+	//Add label for x and label for size
+	chart.xAxis.axisLabel(dimX+" Paramêtre de la taille des points: "+dimSize + " Paramêtre de la couleur des points: "+ dimColor );
+	//Add label for y 
 	chart.yAxis.axisLabel(dimY);
     //Modify tooltips
 	chart.tooltip.contentGenerator(function(data){
-		console.log(data);
 		var text="";
 		//Set the content of tooltip
 		//If we have picture
 		if(typeof data.point.pictures !== 'undefined' && data.point.pictures !=""){
 			text+="<div style='text-align: center'><img src='http://"+data.point.pictures+"' class ='img-circle'></div>";
 		}
-		text+="<p><b>Nom Produit: "+data.point.label+"</b></p>"
+		text+="<p><b>"+data.point.label+"</b></p>"
 		+"<p>"+dimX+":"+data.point.x+"</p>"
 		+"<p>"+dimY+":"+data.point.y+"</p>";
+		//If we have third dimension
 		if(typeof dimSize !== 'undefined'){
 			text+="<p>"+dimSize+":"+data.point.size+"</p>";
 		}
+		//If we have fourth dimension
 		if(typeof dimColor !== 'undefined'){
 			text+="<p>"+dimColor+":"+data.point.datacolor+"</p>";
 		}
-		console.log(text);
 		return text;
 	});
 	
-	/*For 4th dimension we must determine min and max value (for calcule color when we create dots)*/
-	//If 4th dimension exist
+	/*For 4th dimension we must determine min and max value (for calculate rgb values for colors later)*/
 	var maxColor;
 	var minColor;
+	//If 4th dimension exist
 	if (typeof dimColor !== 'undefined'){
 		//for each product we get his list of features
-		$.each(json, function(i, product) {
+		$.each(json, function(i, product){
 			if (i != "FILTERS" && i !="DIMENSIONS"){
+				//we get value for feature == name (feature for 4th dimension)
 				var value = parseFloat(product[dimColor],10);
-				//we search value for feature == name (feature for filter)
 			    //check if it's first time we search min value
 				if(typeof minColor === 'undefined'){
 					minColor=value;
@@ -179,7 +172,7 @@ function LoadData(chart) {
 	var group=0;
 	$.each(json, function(name, product) {
 		if (name != "FILTERS" && name !="DIMENSIONS"){
-			//check  dimensions and get value
+			//check  dimensions and get value (sometime few products/objets don't have value for one of this dimensions)
 			var valx=0;
 			var valy=0;
 			var valsize=0;
@@ -200,80 +193,88 @@ function LoadData(chart) {
 					valcolor= parseFloat(product[dimColor],10);
 				}
 			}
+			//create group 
+			//Here: one group=one dot.Because,nvd3 set color for each group only 
+			//and we can have an unique value for 4th dimension (who set color) for each dot
 			data.push({
 				key: name,
 				values: []
 			});
+			//add dot in group
 			data[group].values.push({
 				/*name*/
-				label: name, //add an object to stock name of product
+				label: name, //name of product for tooltip
 				/*values for dimensions*/
 				x: valx, //set x position with value for first dimension
 				y: valy, //set y position with value for second dimension
 				size: valsize, //set size with value for third dimension
-				datacolor: valcolor, //for see value in tooltip
+				datacolor: valcolor, //for set color and for tooltip
 				/* data for personalize dots*/
-				pictures: product["_IMG_"],
-				dimColorValue: setColor(dimColor,valcolor,maxColor,minColor) //call function to set a rgb value for color
+				pictures: product["_IMG_"], //url of picture for tooltip
+				dimColorValue: setColor(dimColor,valcolor,maxColor,minColor) //Call function to set a rgb value for color
 			});
 			group++;
 		}
 	});
-	
 	return data;
 }
 
-//Function for generation of all filters
+//Function for generate filters: generate html code and add this in index.html
 function GenerateFilter(json){
-	//On récupére dans une var la partie filtre de notre site
+	//We get in our html files, the id of filter's parts
 	var filter = document.getElementById('filters');
-	//On va ensuite créer un element que l'on ajoutera dans cette partie
-	//Variables qui contiendra tout le code html des filtres 
+	
+	//Set variable which contains generated html code 
 	var contents="";
+	//Variables for subparts of generated html code
 	var contentsCheckbox="<div class='page-header'>"
 	+"<p class='list-group-item-heading'>Caractéristiques</p>"
 	+"</div>";
 	var contentsString="";
 	var contentsNumber="";
-	//Test print object filters
-	//console.log(json["FILTERS"]);
 	//for each element in json,check his type and add content in filter part
 	$.each(json["FILTERS"], function(name, type) {
+		/*Type boolean: one checkbox*/
 		if (type=="BooleanValue"){
+			//Add checkbox
 			contentsCheckbox+="<p class='list-group-item-text' >"
              +"<div class='checkbox checkbox-primary'>"
              +"<label><input type='checkbox' ' name='chbx"+name+"' value='chbx"+name+"'>"+name+"</label>"
              +"</div>";
+		/*Type number: slider*/
 		}else if (type=="IntegerValue" || type=="RealValue"){
+			/*We create slider: we must determine max and min values*/
 			//Search the max and min value for this filter
 			var min;
 			var max;
-			//for each product we get his list of features
+			//For each product we get his list of features
 			$.each(json, function(i, product) {
 				if (i != "FILTERS" && i !="DIMENSIONS"){
 					var value = parseFloat(product[name],10);
-					//we search value for feature == name (feature for filter)
-					//check if it's first time we search min value
+					//We search value for feature == name (feature for this filter)
+					//Check if it's first time we search min value
 					if(typeof min === 'undefined'){
 						min=value;
 					}
-					//check if it's first time we search max value
+					//Check if it's first time we search max value
 					if(typeof max === 'undefined'){
 						max=value;
 					}
-					//check if his value < min
+					//Check if his value < min
 					if(value < min){
 						min=value;
 					}
-					//check if his value > max
+					//Check if his value > max
 					if(value > max){
 						max=value;
 					}
 				}
 			});
-			//determine value change when moving object
+			//Determine value change when moving sliders
 			var datasliderstep=(max-min)/50;
+			//Add slider
 			contentsNumber+="<div class='page-header'><p class='list-group-item-heading'>"+name+"</p></div><b>"+min+"</b><input id='inter"+name+"' type='text' class='span2' data-value="+min+","+max+" value="+min+","+max+" data-slider-min='"+min+"' data-slider-max='"+max+"' data-slider-step='"+datasliderstep+"' data-slider-value='["+min+","+max+"]'/> <b>"+max+"</b>";
+		/*Type string: list of checkbox (one by unique string value)*/
 		}else if (type=="StringValue"){
 			//Create header of this list
 			contentsString+="<div class='page-header'>"
@@ -288,50 +289,53 @@ function GenerateFilter(json){
 				}
 			});
 			
-			//Delete duplicate value 
+			//Delete duplicate value on list 
 			var ArrValueUn = ArrValue.filter(function(elem, pos) {return ArrValue.indexOf(elem) == pos;}); 
+			
+			//Now we complete html with each element of the list
 			$.each(ArrValueUn, function(i,value) {
-			//Now we complete html with the list
+			//Add checkbox
 			contentsString+="<p class='list-group-item-text' >"
 					+"<div class='checkbox checkbox-primary'>"
-					+"<label><input type='checkbox' name='chbx"+name+""+value+"' value='chbx"+name+""+value+"'>"+value+"</label>"
+					+"<label><input type='checkbox' name='chbx"+name+value+"' value='chbx"+name+value+"'>"+value+"</label>"
 					+"</div>";
 			});
 		}
 	}); 
-	//Ajout du contenu html crée
+	//Add subparts
 	contents=contentsCheckbox+contentsNumber+contentsString;
+	//Add generate html code to index.html
 	filter.innerHTML=contents;
-	//Création de l'objet Slider With JQuery
+	//Create slider with JQuery
 	$(".span2").slider({});
 }
 
-//Function for manage picture for each dot (in data, product,chart)
+//Function for personalize each dot
 function personalizeDots(chart,data){
-	//Change color of dots or change to picture
 	//array for set color for each dot
 	var colors=[]
 	$.each(data,function(index,value){
-		/*if (typeof data[index].values[0].pictures !== 'undefined'){
-			DisplayImg(data,index,data[index].values[0].pictures) //fill the dot with picture
-		}*/
+		//add to array: rgb color determine in dimColorValue
 		colors.push(data[index].values[0].dimColorValue);
 	});
+	//add in chart.color list of color for each group of dot (for each dot here)
 	chart.color(colors);
 }
 
 //Function for define color
 function setColor(dimColor,valueCol,max,min){
 	var color;
+	//check if we have a 4th dimension and and a value for this dimension for this objet
 	if(typeof dimColor !== 'undefined' && valueCol != "inconnue"){
+		//Determine pourcentage 
 		var pourc=parseFloat(((valueCol-min)/(max-min))*100,2);
-		//Trouver un moyen efficase de determiner un %
+		//Default value for red and green parameters
 		var r=80;
 		var g=180;
-		//if pourcentage <50% color varie green to yellow : we just modifiy red value for this
+		//If pourcentage <50% color change green to yellow : we just modifiy red value for this
 		if (pourc<50){
 			r+=pourc*2;
-		//if pourcentage >50% color vairie yellow to red: we add 100 for red value and soustring pour-50 for green value
+		//If pourcentage >50% color change yellow to red: we add 100 for red parameter and soustring some value for green parameter
 		}else{
 			r+=100;
 			g=g-(180*(((pourc-50)*2)/100)); //example: 180*((5*2)/100) (for 55%)
@@ -342,32 +346,4 @@ function setColor(dimColor,valueCol,max,min){
 	}
 	return color;
 	
-}
-//Function that display the product's image
-function DisplayImg(data,index,urlImg){
-	var svg = d3.select("body").append("svg");
-	console.log(svg.append("dot").data(data).enter().append("circle")[0][index]);
-	//svg.append("dot").data(data).enter().append("circle")[0][index].style.fill="http://"+urlImg;
-	//svg.selectAll(".dot").data(data).enter().append("circle")[0][index].fill="http://"+urlImg;
-
-	/*var dot = d3.selectAll(".dot").data(data).enter().append("circle")[0][index];
-	dot.nextSibling="<image>";
-	dot.style.fill="http://"+urlImg;*/
-	
-	console.log("http://"+urlImg);
-	
-	//chart.style("fill", "url(#http://"+urlImg+")"); //TODO: trouver un moyen de choisir le point dont on veut changer le style
-	
-	//Préconditions : 
-	//Existance d'une URL
-	//L'URL est valide
-	// ********************
-	//On va ensuite créer un element que l'on ajoutera dans cette partie
-	//Variables qui contiendra tout le code html de l'image
-	//var contentsImg="<div>			<img src = '";
-	//contentsImg+=urlImg;
-	//contentsImg+="http://www.nobelcar.fr/public/img/big/lamborghini-aventador-9-1024x680.jpg" 
-	//contentsImg+="'class = 'img-circle'><div>";
-	//return(contentsImg);
-	//document.getElementById('pictures').innerHTML=contentsImg;
 }

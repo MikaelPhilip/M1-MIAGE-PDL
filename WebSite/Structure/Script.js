@@ -1,1 +1,1 @@
-<!--Furtur script js méthode de traitement generales/basiques-->
+//TODO: fonction gestion dynamique des filtres: methode des listeners
