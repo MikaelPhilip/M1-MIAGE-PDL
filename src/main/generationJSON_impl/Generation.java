@@ -102,7 +102,7 @@ public class Generation implements GenerationInter {
 		_json.put("FILTERS", objfilterJSON_);
 		choixDimension(_json.getJSONObject("FILTERS"));
 		_logger.info("ammar"+_json);
-		//this.afficherJSON(_json);
+		this.afficherJSON(_json);
 		
 //return this.verifJSONgenere(_json, pcmP_);
 	}
