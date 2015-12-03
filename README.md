@@ -27,6 +27,7 @@ The Treatment will be done by reusing Java API for handling matrices.Un "product
 - A panel of configuration / filtering which dynamically is able to update the placement of products (and to eliminate the products which do not correspond any more to the wishes of the user).
 
 
+
 ##License
 
 
@@ -53,7 +54,6 @@ JAVA
 - Bootstrap: collection of tools useful for the design of sites and Web applications.
 - D3:library for displaying a graph.
 
-
 Choice of tools
 
 - For the part conception of the project,  we will use UML as language ofModelling and PowerAMC as software to generate the models and Diagrams.
@@ -64,7 +64,15 @@ Choice of tools
 
 ##Project Architecture 
 
+PART JAVA:
 
+  Purpose: Treatment of matrices and sending data to the website
+-> A package: data recovery and treatment of the matrix
+- Retrieve matrices.
+- Check data integrity and filters.
+-> A package: generation of data for web pages and sending data
+- Transform the data and put it into a JSON file.
+- Transforming the filters and put them in a JSON file.
 
 
 
