@@ -1,6 +1,5 @@
 package main.traitement;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 
 import org.opencompare.api.java.PCM;
@@ -11,14 +10,7 @@ public interface TraitementInter {
 	 * @param files: chemin du fichier
 	 */
 	public void pcmLoad(String files) throws IOException;
-	
-	/**
-	 * Méthode de lecture d'un fichier
-	 * @param nom_fichier
-	 * @return
-	 */
-	public BufferedReader lirefichier(String nom_fichier);
-	
+
 	public void pcmVerify(PCM pcm);
 	
 }

@@ -2,19 +2,23 @@ package main.execution;
 
 import java.io.IOException;
 
-import main.generationJSON_impl.Generation;
+import main.traitement.TraitementInter;
 import main.traitement_Impl.Traitement;
-
-import testLibrairies.MyPCMPrinterTest;
-
+/**
+ * Main launch generation and contains parameters
+ * @author 12000209
+ */
 public class Main {
-	public static void main(String[] args) throws IOException{
-		//Créer un objet traitement : va charger le fichier pcm et le vérifier
-		Traitement traitement= new Traitement();
-		
-		//TODO: faire une interface qui permettra d'indiquer le chemin du fichier (ou sur console)
-		//Chargement d'un fichier
-		traitement.pcmLoad("pcms/VenteDisque.pcm");
+	
+	public static String PCMPATH="pcms/data.pcm";
+	public static String PARAMPATH="./testParameters/JSONParametres.json";
+	public static String JSONPATH="./json/generation.json";
+	
+	public static void main(String[] args) throws IOException{	
+		//Create traitement
+		TraitementInter traitement= new Traitement();
+		//Launch traitement
+		traitement.pcmLoad(PCMPATH);
 		
 		
 	}

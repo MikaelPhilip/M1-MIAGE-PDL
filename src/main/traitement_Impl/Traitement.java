@@ -1,46 +1,51 @@
 package main.traitement_Impl;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
 import org.opencompare.api.java.Feature;
 import org.opencompare.api.java.PCM;
 import org.opencompare.api.java.Product;
 import org.opencompare.api.java.impl.io.KMFJSONLoader;
 import org.opencompare.api.java.io.PCMLoader;
 
+import main.generationJSON.GenerationInter;
 import main.generationJSON_impl.Generation;
 import main.traitement.TraitementInter;
 
+/**
+ * Class to load and verify pcm
+ */
 public class Traitement implements TraitementInter{
-
+	/**Logger for feedback**/
+	private static final Logger _logger = Logger.getLogger(Traitement.class);
+	//Pcm use for traitement
 	private PCM pcm;
-	private Generation json ;
+	//Class we call when everything is ok
+	private GenerationInter json ;
 	
+	
+	/**
+	 * Method to load pcm
+	 */
 	@Override
 	public void pcmLoad(String files) throws IOException {
-		//Load a PCM
+		//Create file
         File pcmFile = new File(files);
-        System.out.println(pcmFile.getClass());
-        
+        //Call Open compare API to load
         PCMLoader loader = new KMFJSONLoader();
-        
+        //Load file
         PCM pcm = loader.load(pcmFile).get(0).getPcm();
+        _logger.info("Pcm load succefully");
         //Call the method that checks PCM's integrity
         pcmVerify(pcm);
-        setPcm(pcm);
 	}
 
-	//@Override
+	@Override
 	/** 
+	 * Method verify pcm
 	 * @param : PCM whom Integrity needs to be checked
-	 * @throws : throw an exception if the PCM's integrity is not checked
-	 * This method check if products or features name are not null
 	 **/
 	public void pcmVerify(PCM pcm) {
         // We start by checking if products'name are not null
@@ -52,7 +57,7 @@ public class Traitement implements TraitementInter{
         	 }
         	 catch(TraitementPcmException e){
         	      //Message 
-        		 System.out.println("Un produit de la PCM est null. ");
+        		 _logger.error("Un produit de la PCM est null. ");
         		//End of Programm
              	System.exit(0);
         	 }
@@ -65,34 +70,20 @@ public class Traitement implements TraitementInter{
         		}
        	     }catch(TraitementPcmException e) {
        	    	 //Process message however you would like
-        		 System.out.println("Une caractéristique de la PCM est null. ");
+       	    	 _logger.error("Une caractéristique de la PCM est null. ");
         		//End of Programm
              	System.exit(0);
        	     }
        	 }
-
-        json = new Generation();
+        _logger.info("Pcm valid");
+        json = new Generation(this);
+        _logger.info("Launch generation");
+        this.pcm = pcm; //save pcm (for test)
+        //Launch generation of json
 		json.generateJSON(pcm);
-  
-}
-
-	@Override
-	public BufferedReader lirefichier(String nom_fichier) {
-		BufferedReader bread = null;
-		try {
-			bread = new BufferedReader(new FileReader(nom_fichier));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		return bread;
 	}
-
 	public PCM getPcm() {
 		return pcm;
-	}
-
-	public void setPcm(PCM pcm) {
-		this.pcm = pcm;
 	}
 
 }
