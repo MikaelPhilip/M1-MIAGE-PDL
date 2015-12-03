@@ -236,10 +236,18 @@ public class Generation implements GenerationInter {
 					//check if we have feature
 					if (jsonGene.has(cell.getFeature().getName())) {
 						//check if value is equals
-						if (!(cell.getContent().equals(jsonGene.get(cell.getFeature().getName())))) {return false;}
-					} else {return false;}
+						if (!(cell.getContent().equals(jsonGene.get(cell.getFeature().getName())))) {
+							_logger.warn("ATTENTION :"+product.getName()+": valeur "+ cell.getFeature().getName()+" non cohérente: " +cell.getContent()+ "=/=" + jsonGene.get(cell.getFeature().getName()));
+							return false;
+						}
+					} else {
+						_logger.warn("ATTENTION :"+product.getName()+": feature non présente");
+						return false;
+					}
 				}
-			} else {return false;}
+			} else {
+				_logger.warn("ATTENTION : Objet/produit non présent");
+				return false;}
 		}
 		return true;
 	}
