@@ -1,0 +1,24 @@
+Product;modele;puissance fiscal;nb de place;categorie de vehicule;nb de porte;consommation CO2;Boite a vitesse;Prix;Energie
+Captur;dCi 90 E6 Energy Intens SetS eco2 ;4 CV;5;Break;4;95 g/km;Manuel;17690;
+Clio estate;dCi 90 Intens eco2;4 CV;5;Citadine;5;90 g/km;Manuel;21160;
+Espace;dCi 160 Energy Zen EDC6;8 CV;7;Monospace;5;120 g/km;Automatique;42090;
+Grand kangoo;dCi 110 Energy Intens;0 CV;7;Break;5;119 g/km;Manuel;17900;
+Kadjar;dCi 130 Energy Intens 4WD;7 CV;5;Break;5;129 g/km;Manuel;34520;
+Kangoo;dCi 110 Energy Zen;6 CV;5;Break;5;115 g/km;Manuel;17290;
+Laguna ;iii (2) 1.5 dci 110 bose edition eco2;6 CV;5;Berline;5;109 g/km ;Mecanique;;
+Master;Confort R 3500 L3 dCi 150;8 CV;3;Chassis simple;2;248 g/km;Manuel;26016;
+Master benne;R 3500 L2 Energy dCi 135 PAF arr;6 CV;3;Benne;2;216 g/km;Manuel;31669;
+Master chassis cabine;F 3500 L3 dCi 125 grand confort;8 CV;3;Chassis cab;2;226 g/km;Manuel;28000;
+Master Fourgon;F 3500 L2H2 Energy dCi 135;8 CV;3;Grand confort;1;180 g/km;Manuel;27542;
+Master grand volume;F 3500 L3 dCi 125 20m3 confort;6 CV;3;Grand volume;2;216 g/km;Manuel;24500;
+Master plancher cabine;F 3500 L3H1 dCi 125 grand confort;8 CV;3;Chassis cab;2;216 g/km;Manuel;30500;
+Meagne coupe;1.6 dCi 130 FAP Energy Ultimate eco2;7 CV;5;Coupe;3;111 g/km;Manuel;23970;
+Megane CC;1.6 dCi 130 Energy FAP GT Line eco2;7 CV ;4;Cabriolet;2;115 g/km;Manuel;23790;
+Megane easter;dCi 110 Energy Nouvelle Limited eco2;5 CV;5;Break;5;90 g/km;Manuel;18593;
+Megane societe; 1.5 dCi 95 eco2 Air;5 CV;2;Societe;5;105 g/km;Manuel;21360;
+SCENIC;RX4 2.0 16S DYNAMIQUE;9cv;5;4x4;5;;mecanique;;
+SCENIC XMOD;dCi 110 Energy Bose eco2;5 CV;5;Monospace;5;105 g/km;Manuel;20690;
+Trafic ;Fourgon Generique L1H1 1000kg dCi 90;7 CV;3;Van;4;198 g/km;Manuel;16500;
+Trafic fourgon;L1H1 1000 dCi 115 grang donfort;5 CV;3;Van;4;170 g/km;Manuel;19828;
+Trafic Plancher Cabine;L2H1 1200 dCi 140 confort;5 CV;3;Chassis cab;0;195 g/km;Manuel;27631;
+twingo;II (2) 1.5 DCI 85 DYNAMIQUE ECO2;4CV;4;citadine;3;90g/km;mecanique;;
