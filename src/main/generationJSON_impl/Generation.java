@@ -269,18 +269,15 @@ public class Generation implements GenerationInter {
 			 jsonObject = (org.json.simple.JSONObject) obj;
 			 _logger.info("jsonParametres " +jsonObject);
 		 } catch (FileNotFoundException e) {
-			_logger.error("error FileNotFoundException (Fichier inexistant");
-			 e.printStackTrace();
+			_logger.error("error FileNotFoundException (Fichier inexistant)");
 			 //End of Programm
           	 System.exit(0);
 		 } catch (IOException e) {
 			 _logger.error("error IOException (Erreur lecture)");
-			 e.printStackTrace();
 			 //End of Programm
           	 System.exit(0);
 		 } catch (ParseException e) {
 			 _logger.error("error ParseException (JSON non valide)");
-			 e.printStackTrace();
 			 //End of Programm
           	 System.exit(0);
 		 }

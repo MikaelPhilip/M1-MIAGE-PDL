@@ -20,7 +20,5 @@ public class Main {
 		TraitementInter traitement= new Traitement();
 		//Launch traitement
 		traitement.pcmLoad(PCMPATH);
-		
-		
 	}
 }

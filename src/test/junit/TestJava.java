@@ -49,9 +49,10 @@ public class TestJava {
 	 *  Method load pcm error: file don't exist
 	 * @throws IOException 
 	**/
-	@Test (expected=IOException.class)
+	@Test
 	public void testChargementPcm2() throws IOException{
 		traitement.pcmLoad("pcms/fail.pcm");
+		assertNull(traitement.getPcm());
 	}
 	
 	/**
@@ -67,7 +68,12 @@ public class TestJava {
 		_jsonGenere=generation.get_json();
 		//we delete first product
 		Iterator<String> it =  _jsonGenere.keys();
-		_jsonGenere.remove(it.next());
+		//Check if first object are object/product not FILTER,DIMENSION object
+		String key=it.next();
+		if (key.equals("FILTERS")||key.equals("DIMENSIONS")){
+			key=it.next();
+		}
+		_jsonGenere.remove(key);
 		//VerifJSONgenere must send false
 		assertFalse("Remove the first Product" , generation.verifJSONgenere(_jsonGenere,traitement.getPcm()));
 	}
@@ -85,7 +91,12 @@ public class TestJava {
 		_jsonGenere=generation.get_json();
 		//we delete one feature of first product
 		Iterator<String> it =  _jsonGenere.keys();
-		JSONObject product=_jsonGenere.getJSONObject(it.next()); //get first product
+		//Check if first object are object/product not FILTER,DIMENSION object
+		String key=it.next();
+		if (key.equals("FILTERS")||key.equals("DIMENSIONS")){
+			key=it.next();
+		}
+		JSONObject product=_jsonGenere.getJSONObject(key); //get first product
 		Iterator<String> it2 =  product.keys(); //iterator on features
 		product.remove(it2.next());  //remove first feature of first product
 		//VerifJSONgenere must send false
@@ -105,7 +116,12 @@ public class TestJava {
 		_jsonGenere=generation.get_json();
 		//we change value one feature of first product
 		Iterator<String> it =  _jsonGenere.keys();
-		JSONObject product=_jsonGenere.getJSONObject(it.next()); //get first product
+		//Check if first object are object/product not FILTER,DIMENSION object
+		String key=it.next();
+		if (key.equals("FILTERS")||key.equals("DIMENSIONS")){
+			key=it.next();
+		}
+		JSONObject product=_jsonGenere.getJSONObject(key); //get first product
 		Iterator<String> it2 =  product.keys(); //iterator on features
 		product.put(it2.next(),"toto"); //change value for first feature
 		assertFalse("Bad value for first feature" , generation.verifJSONgenere(_jsonGenere,traitement.getPcm()));

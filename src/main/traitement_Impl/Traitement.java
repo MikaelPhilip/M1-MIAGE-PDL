@@ -30,16 +30,22 @@ public class Traitement implements TraitementInter{
 	 * Method to load pcm
 	 */
 	@Override
-	public void pcmLoad(String files) throws IOException {
+	public void pcmLoad(String files) {
 		//Create file
         File pcmFile = new File(files);
         //Call Open compare API to load
         PCMLoader loader = new KMFJSONLoader();
         //Load file
-        PCM pcm = loader.load(pcmFile).get(0).getPcm();
-        _logger.info("Pcm load succefully");
-        //Call the method that checks PCM's integrity
-        pcmVerify(pcm);
+        PCM pcm ;
+		try {
+			pcm = loader.load(pcmFile).get(0).getPcm();
+			_logger.info("Pcm load succefully");
+		    //Call the method that checks PCM's integrity
+		    pcmVerify(pcm);
+		} catch (IOException e) {
+			_logger.error("Pcm not found");
+		}
+       
 	}
 
 	@Override
@@ -82,6 +88,11 @@ public class Traitement implements TraitementInter{
         //Launch generation of json
 		json.generateJSON(pcm);
 	}
+	
+	/**
+	 * Accesseur
+	 * @return
+	 */
 	public PCM getPcm() {
 		return pcm;
 	}
