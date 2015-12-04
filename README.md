@@ -30,12 +30,12 @@ The Treatment will be done by reusing Java API for handling matrices.Un "product
 
 ##Development tools
 
-languages:
+###Languages:
 
 - JAVA for treatment.
 - HTML / JS / CSS for display.
 
-library:
+###Library:
 
 JAVA
 
@@ -47,7 +47,7 @@ JAVA
 JS:
 
 - ANGULAR JS: open-source JavaScript Framework, which modifies and creates a page html dynamically monitors and detects changes on a JavaScript object.
-- JSON (Javascript Object Notation) : is a lightweight data-interchange format (syntax for storing and exchanging data)
+- JSON (Javascript Object Notation) : is a lightweight data-interchange format (syntax for storing and exchanging data).
 - Bootstrap: collection of tools useful for the design of sites and Web applications.
 - D3:library for displaying a graph.
 
@@ -82,12 +82,33 @@ PART JS:
 	-> Folder library
 		- Sets scripts and files of the various libraries used.
 
-
 ##Instructions for deployment
 
+1)Create a folder and put the GenerateChart.jar file (bin/GenerateChart.jar).
 
+2)Put in root of this folder pcms,testParameters and WebSite folders (If you want, you can delete examples) and create folder json. 
+
+3)To test applications with one of your data: Add one file "data.pcm" (created by use openCompare) in folder pcm and create "JSONParameters.json" where you write your dimension choice (see examples for syntax).
+
+4)Launch serveur (UWamp,EasyPhp,..) and set his root in Website folder.
+
+5)Go to the main page of web site (index.html) : you can see generated filters and chart.
+
+6)Change contents of data.pcm and JSONParameters.json to create new chart. 
+
+If you import project in IDE (like Eclipse), just don't forget to launch server and set his root in Website folder. 
 
 ##Execution of the Demonstration
+
+List of pcm examples, to use them put theirs content in data.pcm and theirs JSONParameters in JSONParameters.json and launch jar (or run project in IDE):
+
+-->Classic Examples (4 dimensions): Camera.pcm, Commerce.pcm, FootPerformance.pcm
+-->Example with pictures for only few objects: CameraWithImg.pcm
+-->Example with pictures for each objects: FootImage.pcm
+-->Example with 3 dimensions: Gender.pcm
+-->Example with 2 dimensions: VenteDisque.pcm
+-->Example with incomplete data (some case with no values for features): Voiture.pcm
+-->Example with lot of data: PaysDetteExterieure.pcm
 
 
 
