@@ -197,7 +197,7 @@ public class Generation implements GenerationInter {
 		//Check if json valid
 		if(verifJSONgenere(json,t.getPcm())){
 		//Show json data
-		_logger.info("JSON Object: " + json);
+		//_logger.info("JSON Object: " + json);
 			try {
 				//Create new file
 				File objFile_ = new File(Main.JSONPATH);
@@ -206,6 +206,7 @@ public class Generation implements GenerationInter {
 				//Register data in file
 				objBufferedWriter_.write(json.toString());
 				objBufferedWriter_.close();
+				_logger.info("Json generé");
 			} catch (IOException e) {
 				_logger.error("error IOExceptionObject");
 				e.printStackTrace();

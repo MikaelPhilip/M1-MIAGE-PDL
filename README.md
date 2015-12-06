@@ -22,11 +22,9 @@ The Treatment will be done by reusing Java API for handling matrices.Un "product
 - An placement of products on an axis in 2 dimensions with abscissas X and orderly Y. X and Y corresponding in characteristics of products (price, size, weight, performance, security,...);
 - A panel of configuration / filtering which dynamically is able to update the placement of products (and to eliminate the products which do not correspond any more to the wishes of the user).
 
-
 ##License
 
- Apache 2
- 
+ Apache 2.0
 
 ##Development tools
 
@@ -54,41 +52,44 @@ JS:
 Tools:
 
 - For the part conception of the project,  we will use UML as language ofModelling and PowerAMC as software to generate the models and Diagrams.
-- For the part JAVA, we use IDE Eclipse  and Maven2 to the structure project.
+- For the part JAVA, we use IDE Eclipse and Maven2 to the structure project.
 - For the Web Part will be tested locally with UwAmp (a Wamp package type,combining several technologies that simplifies the creation of a Web serverWindows).
 
 
 ##Project Architecture 
 
 PART JAVA:
-  Purpose: Treatment of matrices and sending data to the website
-	->A package: data recovery and treatment of the matrix
+  Purpose: Treatment of matrices and sending data (JSON file) to the website
+	-> A package: data recovery and treatment of the matrix
 		- Retrieve matrices.
-		- Verify the integrity of the data and the filters.
+		- Verify the integrity of the data and the features.
 	-> A package: generation of data for web pages and sending data
 		- Transform the data and put it into a JSON file.
-		- Transforming the filters and put them in a JSON file.
-		- Manage dimensions for chart and put information in a JSON file.
+		- Create filters data for chart and put it into a JSON file.
+		- Create dimensions data for chart and put it into a JSON file.
 
 PART JS:
-  Purpose: Reception graphics and visualization of data sent / Management of interactions
+  Purpose: Load the data sent and generate chart and filters/ Management of interactions
 	-> Folder Basic Structure (html + css + js)
-		- Html file (skeleton of the page and page launched by the Web server).
+		- Html file (skeleton of the page launched by the Web server).
 		- Css file that contains some formatting of our objects.
-		- Js file which assures the interaction (generic methods on each type filters).
-		- File js treatments(methods called by by the file js interaction). 
-	-> File Handling
-		- Js file that will contain all methods to create a chart and filters(modification / fill html file)
-	-> Folder library
-		- Sets scripts and files of the various libraries used.
+		- Js files which assures the interaction (listeners and generic methods for each type of filters). NOT IMPLEMENTED
+	-> File Handling (Traitement)
+		- Js file that will contain all methods to create chart and filters..
+	-> Folder library (Libraries)
+		- Contains scripts and files of the various libraries used.
 
 ##Instructions for deployment
+
+Instruction to test Product Chart project:
 
 1)Create a folder and put the GenerateChart.jar file (bin/GenerateChart.jar).
 
 2)Put in root of this folder pcms,testParameters and WebSite folders (If you want, you can delete examples) and create folder json. 
 
-3)To test applications with one of your data: Add one file "data.pcm" (created by use openCompare) in folder pcm and create "JSONParameters.json" where you write your dimension choice (see examples for syntax).
+3)To test this application with one of your data: Add/overwrite file "data.pcm" (created by use openCompare) in folder pcm and create/overwrite "JSONParameters.json" where you write your dimension choice (see examples for syntax).
+
+4)Execute GenerateChart.jar and check Log.log for check execution trace.
 
 4)Launch serveur (UWamp,EasyPhp,..) and set his root in Website folder.
 
@@ -100,7 +101,7 @@ If you import project in IDE (like Eclipse), just don't forget to launch server 
 
 ##Execution of the Demonstration
 
-List of pcm examples, to use them put theirs content in data.pcm and theirs JSONParameters in JSONParameters.json and launch jar (or run project in IDE):
+List of pcm examples, to use them put their content in data.pcm, their json parameters files in JSONParameters.json and launch jar:
 
 -->Classic Examples (4 dimensions): Camera.pcm, Commerce.pcm, FootPerformance.pcm
 -->Example with pictures for only few objects: CameraWithImg.pcm
